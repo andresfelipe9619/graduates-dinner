@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <base target="_top">
+    <meta http-equiv="Content-Security-Policy" content="connect-src http:">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.min.css" />
+    <style>
+
+        #navbar {
+    margin-bottom: 60px;
+  }
+
+  #main-content {
+    margin-top: 60px ;
+  }
+
+  ::placeholder {
+    text-transform: none;
+  }
+
+  #mainForm {
+    display: none;
+  }
+
+  #id-search {
+    margin-top: 20px;
+  }
+
+  .not-allowed {
+    cursor: not-allowed  !important;
+  }
+
+  .not-visible{
+    display: none !important;
+  }
+
+  .visible{
+    display: block !important;
+  }
+
+}
+  </style>
+</head>
+
+<body>
+    <div id="navbar" class="ui fixed inverted menu red">
+        <div class="ui container">
+            <h3 class="header item">
+                <img class="logo" src="http://www.univalle.edu.co/images/logo-footer.png">&nbsp;&nbsp;Noche de Gala
+                Egresados
+                2018
+            </h3>
+        </div>
+    </div>
+
+    <div id="main-content" class="ui main container middle center grid">
+        <div class="one column row fluid" id="id-search">
+            <div id="search-container" class="twelve wide column">
+                <div class="ui fluid action input large">
+                    <input id="busca-cedula" name="busca-cedula" class="numeric" placeholder="Ingrese su numero de cédula..."
+                        type="text">
+                    <button id="btn-search" tabindex="0" class="ui red button" onclick="searchForPerson()">
+                        Continuar
+                    </button>
+                </div>
+            </div>
+            <div class="four wide column">
+                <div id="search-msg" class="ui message hidden"></div>
+            </div>
+        </div>
+        <div class="row">
+
+            <div id="mainForm" class="twelve wide center column">
+                <div id="pay-msg" class="ui success message not-visible">
+                </div>
+                <form class="ui form attached fluid segment">
+                    <div class="ui error message"><i class="close icon"></i></div>
+
+                    <h4 class="ui dividing header">Información General</h4>
+                    <div class="field">
+                        <div class="fields">
+                            <div class="sixteen wide field">
+                                <label>Número de Cédula</label>
+                                <input class="numeric" name="cedula" placeholder="Numero de documento" type="text">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <div class="two fields">
+                            <div class="field">
+                                <label>Nombres</label>
+                                <input name="nombres" placeholder="Nombres" type="text">
+                            </div>
+                            <div class="field">
+                                <label>Apellidos</label>
+                                <input name="apellidos" placeholder="Apellidos" type="text">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fields regreso">
+                        <div class="ten wide field">
+                            <label>Programa Académico del cual egresó</label>
+                            <select name="programa" class="ui dropdown search">
+                            </select>
+                        </div>
+                        <div class="six wide field">
+                            <label>Facultad</label>
+                            <select name="facultad" class="ui dropdown search">
+                            </select>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+        <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+            crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.9/semantic.min.js"></script>
+        <?!= include('main'); ?>
+</body>
+
+</html>
