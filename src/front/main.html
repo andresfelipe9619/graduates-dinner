@@ -12,8 +12,13 @@
       loadAcademicProgramsAndFaculties();
       $(".ui.radio.checkbox").checkbox();
       $("select.dropdown").dropdown();
-      $(".ui.modal").modal();
-      $(".ui.modal").modal('setting', 'closable', false)
+
+      for (var i = 1; i <= 6; i++) {
+           $("select[name='static_invitados']").append($('<option>', {
+                    value: i,
+                    text: i
+            }));
+        };
 
       $(".numeric").on("keypress", function(e) {
         return (
@@ -41,7 +46,6 @@
         var formData = mForm.serializeArray()
         mForm.addClass("loading");
 
-         formData.push({name: 'doc_file', value: 'SRA'});
           addPayment(formData)
         
   
@@ -160,11 +164,7 @@
       $("input[name='celular']").val(person.data.celular);
       $("select[name='programa']").dropdown("set selected", person.data.programa);
       $("select[name='facultad']").dropdown("set selected", person.data.facultad);
-      if (person.data["cena_vegana"] == "SI") {
-        $("input[name='cena_vegana']").prop("checked", true);
-      } else {
-        $("input[name='cena_vegana']").prop("checked", false);
-      }
+
       if (person.data["pago_comprobado"] == "SI") {
         $("#pay-msg").removeClass("not-visible");
              $("#pay-msg").removeClass("warning");
@@ -189,13 +189,11 @@
       $(".ui.dropdown").addClass("disabled");
       $(".fields.regreso").addClass("not-allowed");
       $(".file-field").addClass("not-visible");
-      $("#submit-btn").addClass("not-visible");
-      $("#submit-pay-btn").addClass("not-visible");
+
       if (person.data["pago_generado"] == "NO") {
         $("#register-pay-btn").removeClass("not-visible");
         $("#register-pay-btn").addClass("visible");
       }
-      $("input[name='politicas']").prop("checked", true);
       disableFormFielfds(true);
       $(".ui.form").removeClass("loading");
   
@@ -232,8 +230,6 @@
       $(".file-field").removeClass("not-visible");
       $("#submit-btn").removeClass("not-visible");
       $("#submit-pay-btn").removeClass("not-visible");
-      $("input[name='politicas']").prop("checked", false);
-      $("input[name='cena_vegana']").prop("checked", false);
       $(".dropdown").dropdown();
       $(".ui.dropdown").removeClass("disabled");
        $(".fields.regreso").removeClass("not-allowed");
@@ -298,7 +294,6 @@
               }
             ]
           },
-
         }
       });
     }

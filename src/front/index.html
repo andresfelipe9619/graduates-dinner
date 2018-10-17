@@ -11,6 +11,9 @@
     margin-bottom: 60px;
   }
 
+.submit.button{
+    margin: 30px 0px 0px 20px;
+}
   #main-content {
     margin-top: 60px ;
   }
@@ -37,6 +40,9 @@
 
   .visible{
     display: block !important;
+  }
+  .ui.disabled.dropdown, .ui.dropdown .menu>.disabled.item{
+    opacity:0.8 !important;
   }
 
 
@@ -70,7 +76,6 @@
             </div>
         </div>
         <div class="row">
-
             <div id="mainForm" class="twelve wide center column">
                 <div id="pay-msg" class="ui success message not-visible">
                 </div>
@@ -112,17 +117,27 @@
                             </select>
                         </div>
                     </div>
-
+                    <div class="fields">
+                        <div class="ten wide field">
+                            <label>Numero de invitads</label>
+                            <select class="ui dropdown" name="static_invitados">
+                            </select>
+                        </div>
+                        <div class="six wide field">
+                            <div id="submit-btn" name="submit-btn " class="ui submit red button">continuar con cena</div>
+                        </div>
+                    </div>
                 </form>
 
             </div>
         </div>
+    </div>
 
-        <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-        <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-            crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.9/semantic.min.js"></script>
-        <?!= include('main'); ?>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.9/semantic.min.js"></script>
+    <?!= include('main'); ?>
 </body>
 
 </html>
