@@ -50,7 +50,7 @@ function searchPerson(cedula) {
 }
 
 function registerPerson(person) {
-  var inscritosSheet = getSheetFromSpreadSheet(GENERAL_DB, "INSCRITOS");
+  var inscritosSheet = getSheetFromSpreadSheet(GENERAL_DB, "TEST");
   var headers = inscritosSheet.getSheetValues(
     1,
     1,
@@ -100,44 +100,46 @@ function validatePerson(cedula) {
   }
 }
 function getFacultiesAndPrograms() {
-    var result = {
-        faculties: null,
-        programs: null
-    }
-    var programs = getPrograms()
-    var lastPrograms = []
-    var esta = false
+  var result = {
+    faculties: null,
+    programs: null
+  };
+  var programs = getPrograms();
+  var lastPrograms = [];
+  var esta = false;
 
-    for (var program in programs) {
-        for (var last in lastPrograms) {
-            if (String(programs[program].nombre) === String(lastPrograms[last].nombre)) {
-                esta = true
-                break
-            } else {
-                esta = false
-            }
-        }
-        if (!esta) {
-            lastPrograms.push(programs[program])
-        }
+  for (var program in programs) {
+    for (var last in lastPrograms) {
+      if (
+        String(programs[program].nombre) === String(lastPrograms[last].nombre)
+      ) {
+        esta = true;
+        break;
+      } else {
+        esta = false;
+      }
     }
-    result.faculties = getFacultiesFromPrograms(programs)
-    result.programs = lastPrograms
-    //logFunctionOutput(getFacultiesAndPrograms.name, result)
-    return result
+    if (!esta) {
+      lastPrograms.push(programs[program]);
+    }
+  }
+  result.faculties = getFacultiesFromPrograms(programs);
+  result.programs = lastPrograms;
+  //logFunctionOutput(getFacultiesAndPrograms.name, result)
+  return result;
 }
 
 function getFacultiesFromPrograms(programs) {
-    var faculties = []
-    for (var program in programs) {
-        if (faculties.indexOf(programs[program].facultad) < 0) {
-            Logger.log('FACULTAD QUE NO ESTA')
-            Logger.log(programs[program].facultad)
-            faculties.push(programs[program].facultad)
-        }
+  var faculties = [];
+  for (var program in programs) {
+    if (faculties.indexOf(programs[program].facultad) < 0) {
+      Logger.log("FACULTAD QUE NO ESTA");
+      Logger.log(programs[program].facultad);
+      faculties.push(programs[program].facultad);
     }
+  }
 
-    return faculties
+  return faculties;
 }
 
 function objectToSheetValues(object, headers) {
@@ -171,21 +173,24 @@ function objectToSheetValues(object, headers) {
 }
 
 function generatePayment(index) {
-  var inscritosSheet = getSheetFromSpreadSheet(GENERAL_DB, "INSCRITOS");
+  var inscritosSheet = getSheetFromSpreadSheet(GENERAL_DB, "TEST");
   var headers = inscritosSheet.getSheetValues(
     1,
     1,
     1,
     inscritosSheet.getLastColumn()
   )[0];
-  var pagoIndex = headers.indexOf("PAGO_GENERADO");
+
+  var pagoIndex = headers.indexOf("HORA_INGRESO");
   Logger.log(pagoIndex);
   Logger.log(index);
   logFunctionOutput(
     generatePayment.name,
     inscritosSheet.getRange(index, pagoIndex).getValues()
   );
-  inscritosSheet.getRange(index + 1, pagoIndex + 1).setValues([["SI"]]);
+  inscritosSheet
+    .getRange(index + 1, pagoIndex + 1)
+    .setValues([[String(new Date())]]);
   return true;
 }
 

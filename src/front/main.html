@@ -11,15 +11,8 @@
       formValidation();
       loadAcademicProgramsAndFaculties();
       $(".ui.radio.checkbox").checkbox();
+
       $("select.dropdown").dropdown();
-
-      for (var i = 1; i <= 6; i++) {
-           $("select[name='static_invitados']").append($('<option>', {
-                    value: i,
-                    text: i
-            }));
-        };
-
       $(".numeric").on("keypress", function(e) {
         return (
           e.metaKey || // cmd/ctrl
@@ -45,39 +38,19 @@
         var mForm = $(".ui.form");
         var formData = mForm.serializeArray()
         mForm.addClass("loading");
-
-          addPayment(formData)
+        ingresarCena(formData)
         
-  
       } catch (error) {
         $(".ui.error.message").text(error.toString());
       }
     }
   
-    function addPayment(formData){
+    function ingresarCena(formData){
             console.log('all is ok', buttonpressed)
-            // if (buttonpressed == "submit-btn") {
-              formData.push({ name: "pago_generado", value: "NO" });
-            // }   
-  
-            var index_vegana = -1;
-            var vegana = formData.find((field, index) => {
-              index_vegana = index;
-              return field.name == "cena_vegana";
-            });
-            console.log(vegana);
-            if (index_vegana > -1 && vegana) {
-              if (formData[index_vegana].value == "on") {
-                formData[index_vegana].value = "SI";
-              } else {
-                formData[index_vegana].value = "NO";
-              }
-            } else {
-              formData.push({ name: "cena_vegana", value: "NO" });
-            }
-  
-            console.log('form',formData)
-            registerPersonInSheet(formData);
+              // formData.push({ name: "hora_ingreso", value: new Date() });
+              // formData.push({ name: "numero_invitados", value: 3 });
+              console.log('form',formData)
+              registerDinner(personIndex);
     }
     
     function registerPersonInSheet(formData) {
@@ -114,6 +87,8 @@
           $("input[name='cedula']").addClass("not-allowed");
           if (person.isRegistered) {
             loadPersonInForm(person);
+          }else{
+            $(".ui.form").removeClass("loading");
           }
         } else {
           console.log("Something went wrong searching user...");
@@ -167,8 +142,8 @@
 
       if (person.data["pago_comprobado"] == "SI") {
         $("#pay-msg").removeClass("not-visible");
-             $("#pay-msg").removeClass("warning");
-       $("#pay-msg").addClass("success");
+        $("#pay-msg").removeClass("warning");
+        $("#pay-msg").addClass("success");
         $("#pay-msg").append( `<i class="icon check circle"></i>
             El pago de su inscripción a la Noche de Gala de Egresados fue registrado satisfactoriamente. Le esperamos el
             próximo 23 de Noviembre de 2018.
@@ -190,21 +165,16 @@
       $(".fields.regreso").addClass("not-allowed");
       $(".file-field").addClass("not-visible");
 
-      if (person.data["pago_generado"] == "NO") {
-        $("#register-pay-btn").removeClass("not-visible");
-        $("#register-pay-btn").addClass("visible");
-      }
       disableFormFielfds(true);
       $(".ui.form").removeClass("loading");
-  
     }
       
-    function submitPayment() {
-      $("#register-pay-btn").addClass("loading");
+    function registerDinner() {
+      $("#submit-btn").addClass("loading");
     
       if (personIndex > -1) {
         function onSuccess(result) {
-          $("#register-pay-btn").removeClass("loading");
+          $("#submit-btn").removeClass("loading");
           if (result) {
             console.log("result", result);
             hideForm()
@@ -260,7 +230,15 @@
             })
           );
         });
-  
+
+              
+      for (var i = 1; i <= 6; i++) {
+        $("select[name='numero_invitados']").append($('<option>', {
+          value: i,
+          text: i
+        }));
+      };
+      
         $("select[name='programa']").on("change", function(e) {
           $.each(result.programs, function(i, program) {
             if (e.target.value == program.nombre) {
