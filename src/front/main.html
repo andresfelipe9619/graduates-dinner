@@ -38,20 +38,14 @@
         var mForm = $(".ui.form");
         var formData = mForm.serializeArray()
         mForm.addClass("loading");
-        ingresarCena(formData)
+
+        registerDinner(personIndex, 3)
         
       } catch (error) {
         $(".ui.error.message").text(error.toString());
       }
     }
-  
-    function ingresarCena(formData){
-            console.log('all is ok', buttonpressed)
-              // formData.push({ name: "hora_ingreso", value: new Date() });
-              // formData.push({ name: "numero_invitados", value: 3 });
-              console.log('form',formData)
-              registerDinner(personIndex);
-    }
+
     
     function registerPersonInSheet(formData) {
       function onSuccess(response) {
@@ -113,17 +107,17 @@
       if (bool) {
         $("input:not([name='busca-cedula'])").prop("readonly", true);
         $("input:not([name='busca-cedula'])").addClass("not-allowed");
-        $(".ui.checkbox").checkbox();
-        $(".ui.checkbox").prop("read-only", false);
-        $(".ui.checkbox").addClass("not-allowed");
-       $("input[type='checkbox']").addClass("not-allowed");
+        // $(".ui.checkbox").checkbox();
+        // $(".ui.checkbox").prop("read-only", false);
+        // $(".ui.checkbox").addClass("not-allowed");
+      //  $("input[type='checkbox']").addClass("not-allowed");
       } else {
         $("input:not([name='busca-cedula'])").prop("readonly", false);
         $("input:not([name='busca-cedula'])").removeClass("not-allowed"); 
-        $(".ui.checkbox").checkbox();
-        $(".ui.checkbox").prop("read-only", false);
-        $(".ui.checkbox").removeClass("not-allowed");
-        $("input[type='checkbox']").removeClass("not-allowed");
+        // $(".ui.checkbox").checkbox();
+        // $(".ui.checkbox").prop("read-only", false);
+        // $(".ui.checkbox").removeClass("not-allowed");
+        // $("input[type='checkbox']").removeClass("not-allowed");
   
       }
     }
@@ -169,7 +163,7 @@
       $(".ui.form").removeClass("loading");
     }
       
-    function registerDinner() {
+    function registerDinner(index, invited) {
       $("#submit-btn").addClass("loading");
     
       if (personIndex > -1) {
@@ -183,13 +177,14 @@
         }
         return google.script.run
           .withSuccessHandler(onSuccess)
-          .generatePayment(personIndex);
+          .generatePayment(index, invited);
       }
     } 
   
     function showForm() {
       $("#mainForm").css("display", "block");
       $("ui.submit.button").css("display", "block");
+      $(".ui.radio.checkbox").checkbox();
       $("input[name='cedula']").val($("#busca-cedula").val());
       disableFormFielfds(false);
     }
@@ -197,9 +192,7 @@
     function hideForm() {
       $("#mainForm").css("display", "none");
       $(".fields.regreso").removeClass("not-allowed");
-      $(".file-field").removeClass("not-visible");
       $("#submit-btn").removeClass("not-visible");
-      $("#submit-pay-btn").removeClass("not-visible");
       $(".dropdown").dropdown();
       $(".ui.dropdown").removeClass("disabled");
        $(".fields.regreso").removeClass("not-allowed");
@@ -230,14 +223,6 @@
             })
           );
         });
-
-              
-      for (var i = 1; i <= 6; i++) {
-        $("select[name='numero_invitados']").append($('<option>', {
-          value: i,
-          text: i
-        }));
-      };
       
         $("select[name='programa']").on("change", function(e) {
           $.each(result.programs, function(i, program) {

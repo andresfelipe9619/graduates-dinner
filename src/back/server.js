@@ -49,30 +49,6 @@ function searchPerson(cedula) {
   return person;
 }
 
-function registerPerson(person) {
-  var inscritosSheet = getSheetFromSpreadSheet(GENERAL_DB, "TEST");
-  var headers = inscritosSheet.getSheetValues(
-    1,
-    1,
-    1,
-    inscritosSheet.getLastColumn()
-  )[0];
-  person.push({ name: "hora_registro", value: new Date() });
-  person.push({ name: "pago_comprobado", value: "NO" });
-
-  logFunctionOutput("perosn", person);
-
-  var personValues = objectToSheetValues(person, headers);
-  var finalValues = personValues.map(function(value) {
-    return String(value);
-  });
-
-  inscritosSheet.appendRow(finalValues);
-  var result = { data: finalValues, ok: true };
-  logFunctionOutput(registerPerson.name, result);
-  return result;
-}
-
 function validatePerson(cedula) {
   var inscritos = getPeopleRegistered();
   // var res = ""
@@ -172,7 +148,7 @@ function objectToSheetValues(object, headers) {
   return arrayValues;
 }
 
-function generatePayment(index) {
+function generatePayment(index, invited) {
   var inscritosSheet = getSheetFromSpreadSheet(GENERAL_DB, "TEST");
   var headers = inscritosSheet.getSheetValues(
     1,
@@ -186,11 +162,11 @@ function generatePayment(index) {
   Logger.log(index);
   logFunctionOutput(
     generatePayment.name,
-    inscritosSheet.getRange(index, pagoIndex).getValues()
+    inscritosSheet.getRange(index, pagoIndex,1,2).getValues()
   );
   inscritosSheet
-    .getRange(index + 1, pagoIndex + 1)
-    .setValues([[String(new Date())]]);
+    .getRange(index + 1, pagoIndex + 1,1,2)
+    .setValues([[String(new Date()), invited]]);
   return true;
 }
 
