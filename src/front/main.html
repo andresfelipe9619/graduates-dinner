@@ -1,16 +1,13 @@
 <script type="text/babel">
 
     $(document).ready(init_js);
-    var buttonpressed;
     var personIndex;
     function init_js() {
-      $(".submit.button").click(function() {
-        buttonpressed = $(this).attr("name");
-      });
+
   
       formValidation();
       loadAcademicProgramsAndFaculties();
-      $(".ui.radio.checkbox").checkbox();
+      $(".ui.checkbox").checkbox();
 
       $("select.dropdown").dropdown();
       $(".numeric").on("keypress", function(e) {
@@ -38,51 +35,42 @@
         var mForm = $(".ui.form");
         var formData = mForm.serializeArray()
         mForm.addClass("loading");
-
-        registerDinner(personIndex, 3)
+       
+      var invitados =$("input[name='invited']:checked").val();
+        registerDinner(personIndex, invitados)
         
       } catch (error) {
         $(".ui.error.message").text(error.toString());
       }
     }
 
-    
-    function registerPersonInSheet(formData) {
-      function onSuccess(response) {
-        if (response.ok) {
-          $(".ui.form").removeClass("loading");
   
-          $("#result-msg").text('')
-          $("#result-msg").text(
-              "Su inscripción a la Cena de Gala Egresados 2018 fue realizada de manera exitosa. Recuerde que usted cuenta con 48 horas para generar su pago. Pasadas estas 48 horas, el sistema deshabilitará la inscripción."
-           );
-          $(".ui.modal").modal("show");
-          $('.actions').css('display', 'block')
-  
-        } else {
-          console.log("You fucked up", response);
-        }
-      }
-      console.log(formData);
-      google.script.run.withSuccessHandler(onSuccess).registerPerson(formData);
-    }
-    
     function searchForPerson() {
       hideForm();
       $("#btn-search").addClass("loading");
     
       var onSuccess = function(person) {
         if (person) {
-          showForm();
-          $(".ui.form").addClass("loading");
-          console.log("A nice formatted person", person);
-          $("#btn-search").removeClass("loading");
-          $("input[name='cedula']").prop("readonly", true);
-          $("input[name='cedula']").addClass("not-allowed");
-          if (person.isRegistered) {
-            loadPersonInForm(person);
+          if(person.index>-1){
+            showForm();
+            $(".ui.form").addClass("loading");
+            console.log("A nice formatted person", person);
+            $("#btn-search").removeClass("loading");
+            $("input[name='cedula']").prop("readonly", true);
+            $("input[name='cedula']").addClass("not-allowed");
+            if (person.isRegistered) {
+              loadPersonInForm(person);
+            }else{
+              $(".ui.form").removeClass("loading");
+            }
           }else{
-            $(".ui.form").removeClass("loading");
+            $("#btn-search").removeClass("loading");
+            $("#search-msg").html("No se encuentra registrado");
+        $("#search-msg").css("display", "block");
+            setTimeout(function(){
+          $("#search-msg").html("No se encuentra registrado");
+          $("#search-msg").css("display", "none");  
+        }, 3000)
           }
         } else {
           console.log("Something went wrong searching user...");
@@ -105,14 +93,14 @@
     
     function disableFormFielfds(bool) {
       if (bool) {
-        $("input:not([name='busca-cedula'])").prop("readonly", true);
+        $("input:not([name='busca-cedula'],[name='invited'])").prop("readonly", true);
         $("input:not([name='busca-cedula'])").addClass("not-allowed");
         // $(".ui.checkbox").checkbox();
         // $(".ui.checkbox").prop("read-only", false);
         // $(".ui.checkbox").addClass("not-allowed");
       //  $("input[type='checkbox']").addClass("not-allowed");
       } else {
-        $("input:not([name='busca-cedula'])").prop("readonly", false);
+        $("input:not([name='busca-cedula'],[name='invited'])").prop("readonly", false);
         $("input:not([name='busca-cedula'])").removeClass("not-allowed"); 
         // $(".ui.checkbox").checkbox();
         // $(".ui.checkbox").prop("read-only", false);
@@ -134,16 +122,23 @@
       $("select[name='programa']").dropdown("set selected", person.data.programa);
       $("select[name='facultad']").dropdown("set selected", person.data.facultad);
 
-      if (person.data["pago_comprobado"] == "SI") {
+ if(person.data["hora_ingreso"] != "" && person.data["numero_invitados"] != "" ){
+  $("#submit-btn").addClass("not-visible");
         $("#pay-msg").removeClass("not-visible");
         $("#pay-msg").removeClass("warning");
         $("#pay-msg").addClass("success");
         $("#pay-msg").append( `<i class="icon check circle"></i>
-            El pago de su inscripción a la Noche de Gala de Egresados fue registrado satisfactoriamente. Le esperamos el
-            próximo 23 de Noviembre de 2018.
-            Si presenta alguna dificultad en el proceso de inscripción, por favor escribanos al correo electrónico soyegresado@correounivalle.edu.co
+           Disfrute de su cena, no puede repetir mas.
+          </div>`);
+      }else       if (person.data["pago_comprobado"] == "SI") {
+        $("#pay-msg").removeClass("not-visible");
+        $("#pay-msg").removeClass("warning");
+        $("#pay-msg").addClass("success");
+        $("#pay-msg").append( `<i class="icon check circle"></i>
+            El pago de su inscripción a la Noche de Gala de Egresados fue registrado satisfactoriamente.
           </div>`);
       }else{
+      $("#submit-btn").addClass("not-visible");
        $("#pay-msg").removeClass("not-visible");
        $("#pay-msg").removeClass("success");
        $("#pay-msg").addClass("warning");
@@ -157,7 +152,6 @@
   
       $(".ui.dropdown").addClass("disabled");
       $(".fields.regreso").addClass("not-allowed");
-      $(".file-field").addClass("not-visible");
 
       disableFormFielfds(true);
       $(".ui.form").removeClass("loading");
@@ -184,7 +178,7 @@
     function showForm() {
       $("#mainForm").css("display", "block");
       $("ui.submit.button").css("display", "block");
-      $(".ui.radio.checkbox").checkbox();
+      $(".ui.checkbox").checkbox();
       $("input[name='cedula']").val($("#busca-cedula").val());
       disableFormFielfds(false);
     }
