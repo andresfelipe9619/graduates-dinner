@@ -37,6 +37,7 @@
         mForm.addClass("loading");
        
       var invitados =$("input[name='invited']:checked").val();
+
         registerDinner(personIndex, invitados)
         
       } catch (error) {
@@ -95,17 +96,17 @@
       if (bool) {
         $("input:not([name='busca-cedula'],[name='invited'])").prop("readonly", true);
         $("input:not([name='busca-cedula'])").addClass("not-allowed");
-        // $(".ui.checkbox").checkbox();
-        // $(".ui.checkbox").prop("read-only", false);
-        // $(".ui.checkbox").addClass("not-allowed");
-      //  $("input[type='checkbox']").addClass("not-allowed");
+        $(".ui.radio.checkbox").checkbox();
+        $(".ui.radio.checkbox").addClass("read-only");
+        $(".ui.radio.checkbox").addClass("not-allowed");
+       $("input[type='radio']").addClass("not-allowed");
       } else {
         $("input:not([name='busca-cedula'],[name='invited'])").prop("readonly", false);
         $("input:not([name='busca-cedula'])").removeClass("not-allowed"); 
-        // $(".ui.checkbox").checkbox();
-        // $(".ui.checkbox").prop("read-only", false);
-        // $(".ui.checkbox").removeClass("not-allowed");
-        // $("input[type='checkbox']").removeClass("not-allowed");
+        $(".ui.radio.checkbox").checkbox();
+        $(".ui.radio.checkbox").removeClass("read-only");
+        $(".ui.radio.checkbox").removeClass("not-allowed");
+        $("input[type='radio']").removeClass("not-allowed");
   
       }
     }
@@ -122,21 +123,32 @@
       $("select[name='programa']").dropdown("set selected", person.data.programa);
       $("select[name='facultad']").dropdown("set selected", person.data.facultad);
 
- if(person.data["hora_ingreso"] != "" && person.data["numero_invitados"] != "" ){
-  $("#submit-btn").addClass("not-visible");
+          if (person.data["invitados"] == "SI") {
+      $("#sir").prop("checked", true);
+    } else  if (person.data["invitados"] == "NO") {
+      $("#nor").prop("checked", true);
+    }
+    disableFormFielfds(true);
+
+      if(person.data["hora_ingreso"] != "" && person.data["invitados"] != "" ){
+        $("#submit-btn").addClass("not-visible");
         $("#pay-msg").removeClass("not-visible");
         $("#pay-msg").removeClass("warning");
         $("#pay-msg").addClass("success");
         $("#pay-msg").append( `<i class="icon check circle"></i>
            Disfrute de su cena, no puede repetir mas.
           </div>`);
-      }else       if (person.data["pago_comprobado"] == "SI") {
+      }else if (person.data["pago_comprobado"] == "SI") {
         $("#pay-msg").removeClass("not-visible");
         $("#pay-msg").removeClass("warning");
         $("#pay-msg").addClass("success");
         $("#pay-msg").append( `<i class="icon check circle"></i>
             El pago de su inscripción a la Noche de Gala de Egresados fue registrado satisfactoriamente.
           </div>`);
+          $(".ui.radio.checkbox").checkbox();
+        $(".ui.radio.checkbox").removeClass("read-only");
+        $(".ui.radio.checkbox").removeClass("not-allowed");
+        $("input[type='radio']").removeClass("not-allowed");
       }else{
       $("#submit-btn").addClass("not-visible");
        $("#pay-msg").removeClass("not-visible");
@@ -144,16 +156,13 @@
        $("#pay-msg").addClass("warning");
   
         $("#pay-msg").append( `<i class="icon warning "></i>
-            El pago de su inscripción aun no ha sido registrado. Recuerde que después de 48 horas sin registrar el pago, el sistema anulará su inscripción.
-            Si presenta alguna dificultad en el proceso de inscripción, por favor escribanos al correo electrónico soyegresado@correounivalle.edu.co
+            El pago de su inscripción aun no ha sido registrado. Por favor realize su pago para acceder ala cena
           </div>`);
   
       }
-  
+
       $(".ui.dropdown").addClass("disabled");
       $(".fields.regreso").addClass("not-allowed");
-
-      disableFormFielfds(true);
       $(".ui.form").removeClass("loading");
     }
       
