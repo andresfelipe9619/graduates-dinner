@@ -37,7 +37,7 @@ function getPrograms() {
 }
 
 function getPeopleRegistered() {
-  var peopleSheet = getRawDataFromSheet(GENERAL_DB, "TEST");
+  var peopleSheet = getRawDataFromSheet(GENERAL_DB, "ASISTENTES");
   var peopleObjects = sheetValuesToObject(peopleSheet);
   // logFunctionOutput(getPeopleRegistered.name, peopleObjects)
   return peopleObjects;
@@ -120,7 +120,7 @@ function getFacultiesFromPrograms(programs) {
 
 function objectToSheetValues(object, headers) {
   var arrayValues = new Array(headers.length);
-  var lowerHeaders = headers.map(function(item) {
+  var lowerHeaders = headers.map(function (item) {
     return item.toLowerCase();
   });
 
@@ -149,7 +149,7 @@ function objectToSheetValues(object, headers) {
 }
 
 function generatePayment(index, invited) {
-  var inscritosSheet = getSheetFromSpreadSheet(GENERAL_DB, "TEST");
+  var inscritosSheet = getSheetFromSpreadSheet(GENERAL_DB, "ASISTENTES");
   var headers = inscritosSheet.getSheetValues(
     1,
     1,
@@ -162,10 +162,12 @@ function generatePayment(index, invited) {
   Logger.log(index);
   logFunctionOutput(
     generatePayment.name,
-    inscritosSheet.getRange(index, pagoIndex,1,2).getValues()
+    inscritosSheet
+      .getRange(index, pagoIndex, 1, 2)
+      .getValues()
   );
   inscritosSheet
-    .getRange(index + 1, pagoIndex + 1,1,2)
+    .getRange(index + 1, pagoIndex + 1, 1, 2)
     .setValues([[String(new Date()), invited]]);
   return true;
 }
@@ -176,10 +178,10 @@ function sheetValuesToObject(sheetValues) {
   var peopleWithHeadings = addHeadings(people, headings);
 
   function addHeadings(people, headings) {
-    return people.map(function(personAsArray) {
+    return people.map(function (personAsArray) {
       var personAsObj = {};
 
-      headings.forEach(function(heading, i) {
+      headings.forEach(function (heading, i) {
         personAsObj[heading] = personAsArray[i];
       });
 

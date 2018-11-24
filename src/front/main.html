@@ -49,7 +49,7 @@
     function searchForPerson() {
       hideForm();
       $("#btn-search").addClass("loading");
-    
+      $("#btn-search").prop('disabled', true);
       var onSuccess = function(person) {
         if (person) {
           if(person.index>-1){
@@ -59,12 +59,14 @@
             $("#btn-search").removeClass("loading");
             $("input[name='cedula']").prop("readonly", true);
             $("input[name='cedula']").addClass("not-allowed");
+            $("#btn-search").prop('disabled', false);
             if (person.isRegistered) {
               loadPersonInForm(person);
             }else{
               $(".ui.form").removeClass("loading");
             }
           }else{
+          $("#btn-search").prop('disabled', false);
             $("#btn-search").removeClass("loading");
             $("#search-msg").html("No se encuentra registrado");
         $("#search-msg").css("display", "block");
@@ -119,6 +121,9 @@
       $("input[name='apellidos']").val(person.data.apellidos);
       $("input[name='cedula']").val(person.data.cedula);
       $("input[name='correo']").val(person.data.correo);
+      console.log(person.data["cena_vegana"])
+      $("input[name='cena_vegana']").val(String(person.data["cena_vegana"]));
+      $("input[name='cena_vegana2']").val(String(person.data["cena_vegana2"]));
       $("input[name='celular']").val(person.data.celular);
       $("select[name='programa']").dropdown("set selected", person.data.programa);
       $("select[name='facultad']").dropdown("set selected", person.data.facultad);
@@ -141,7 +146,7 @@
         $("#pay-msg").removeClass("warning");
         $("#pay-msg").addClass("success");
         $("#pay-msg").append( `<i class="icon check circle"></i>
-            El pago de su inscripción a la Noche de Gala de Egresados fue registrado satisfactoriamente.
+          Bienvenido, el pago de su inscripción a la Noche de Gala de Egresados fue registrado satisfactoriamente.
           </div>`);
           $(".ui.radio.checkbox").checkbox();
         $(".ui.radio.checkbox").removeClass("read-only");
@@ -154,7 +159,7 @@
        $("#pay-msg").addClass("warning");
   
         $("#pay-msg").append( `<i class="icon warning "></i>
-            El pago de su inscripción aun no ha sido registrado. Por favor realize su pago para acceder ala cena
+            El pago de su inscripción aun no ha sido registrado. Por favor realize su pago para acceder a la cena
           </div>`);
   
       }

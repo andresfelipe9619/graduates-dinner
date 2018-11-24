@@ -1,152 +1,206 @@
 <!DOCTYPE html>
 <html>
-
-<head>
-    <base target="_top">
-    <meta http-equiv="Content-Security-Policy" content="connect-src http:">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.min.css" />
+  <head>
+    <base target="_top" />
+    <meta http-equiv="Content-Security-Policy" content="connect-src http:" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.min.css"
+    />
     <style>
+      #navbar {
+        margin-bottom: 60px;
+      }
 
-        #navbar {
-    margin-bottom: 60px;
-  }
+      .submit.button {
+        margin: 30px 0px 0px 20px;
+      }
+      #main-content {
+        margin-top: 60px;
+      }
 
-.submit.button{
-    margin: 30px 0px 0px 20px;
-}
-  #main-content {
-    margin-top: 60px ;
-  }
+      ::placeholder {
+        text-transform: none;
+      }
 
-  ::placeholder {
-    text-transform: none;
-  }
+      #mainForm {
+        display: none;
+      }
 
-  #mainForm {
-    display: none;
-  }
+      #id-search {
+        margin-top: 20px;
+      }
 
-  #id-search {
-    margin-top: 20px;
-  }
+      .not-allowed {
+        cursor: not-allowed !important;
+      }
 
-  .not-allowed {
-    cursor: not-allowed  !important;
-  }
+      .not-visible {
+        display: none !important;
+      }
 
-  .not-visible{
-    display: none !important;
-  }
+      .visible {
+        display: block !important;
+      }
+      .ui.disabled.dropdown,
+      .ui.dropdown .menu > .disabled.item {
+        opacity: 0.8 !important;
+      }
 
-  .visible{
-    display: block !important;
-  }
-  .ui.disabled.dropdown, .ui.dropdown .menu>.disabled.item{
-    opacity:0.8 !important;
-  }
+      input[name="nombres"],
+      input[name="apellidos"],
+      input[name="busca-cedula"],
+      input[name="cena_vegana"],
+      input[name="cena_vegana2"] {
+        font-size: 24px !important;
+        font-weight: bold !important;
+      }
+    </style>
+  </head>
 
-
-  </style>
-</head>
-
-<body>
-    <div id="navbar" class="ui fixed inverted menu red">
+  <body>
+    <!--
+      <div id="navbar" class="ui fixed inverted menu red">
         <div class="ui container">
-            <h3 class="header item">
-                <img class="logo" src="http://www.univalle.edu.co/images/logo-footer.png">&nbsp;&nbsp;Noche de Gala
-                Egresados
-                2018
-            </h3>
+          <h3 class="header item">
+            <img
+              class="logo"
+              src="http://www.univalle.edu.co/images/logo-footer.png"
+            />&nbsp;&nbsp;Noche de Gala Egresados 2018
+          </h3>
         </div>
-    </div>
+      </div>
+    -->
 
     <div id="main-content" class="ui main container middle center grid">
-        <div class="one column row fluid" id="id-search">
-            <div id="search-container" class="twelve wide column">
-                <div class="ui fluid action input large">
-                    <input id="busca-cedula" name="busca-cedula" class="numeric" placeholder="Ingrese su numero de cédula..."
-                        type="text">
-                    <button id="btn-search" tabindex="0" class="ui red button" onclick="searchForPerson()">
-                        Continuar
-                    </button>
-                </div>
-            </div>
-            <div class="four wide column">
-                <div id="search-msg" class="ui message hidden"></div>
-            </div>
+      <div class="one column row fluid" id="id-search">
+        <div
+          id="search-container"
+          class="twelve wide computer sixteen wide tablet mobile column"
+        >
+          <div class="ui fluid action input large">
+            <input
+              id="busca-cedula"
+              name="busca-cedula"
+              class="numeric"
+              placeholder="Ingrese su numero de cédula..."
+              type="number"
+              autofocus
+            />
+            <button
+              id="btn-search"
+              tabindex="0"
+              class="ui red button"
+              onclick="searchForPerson()"
+            >
+              Continuar
+            </button>
+          </div>
         </div>
-        <div class="row">
-            <div id="mainForm" class="twelve wide center column">
-                <div id="pay-msg" class="ui success message not-visible">
-                </div>
-                <form class="ui form attached fluid segment">
-                    <div class="ui error message"><i class="close icon"></i></div>
-
-                    <h4 class="ui dividing header">Información General</h4>
-                    <div class="field">
-                        <div class="fields">
-                            <div class="sixteen wide field">
-                                <label>Número de Cédula</label>
-                                <input class="numeric" name="cedula" placeholder="Numero de documento" type="text">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="field">
-                        <div class="two fields">
-                            <div class="field">
-                                <label>Nombres</label>
-                                <input name="nombres" placeholder="Nombres" type="text">
-                            </div>
-                            <div class="field">
-                                <label>Apellidos</label>
-                                <input name="apellidos" placeholder="Apellidos" type="text">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="fields regreso">
-                        <div class="ten wide field">
-                            <label>Programa Académico del cual egresó</label>
-                            <select name="programa" class="ui dropdown search">
-                            </select>
-                        </div>
-                        <div class="six wide field">
-                            <label>Facultad</label>
-                            <select name="facultad" class="ui dropdown search">
-                            </select>
-                        </div>
-                    </div>
-                    <br />
-                    <br />
-                    <div class="twelve wide fields">
-                        <div class="inline fields">
-                            <label for="invited">Acompañante: </label>
-                            <div class="field">
-                                <div class="ui radio checkbox">
-                                    <input type="radio" value="SI" id="sir" name="invited" tabindex="0">
-                                    <label>Si</label>
-                                </div>
-                                <!-- <div class="ui radio checkbox">
-                                    <input type="radio" value="NO" id="nor" name="invited" checked="" tabindex="0">
-                                    <label>No</label>
-                                </div> -->
-                            </div>
-                        </div>
-                    </div>
-                    <div class="six wide field">
-                        <div id="submit-btn" name="submit-btn " class="ui submit red button">continuar con cena</div>
-                    </div>
-                </form>
-            </div>
+        <div class="four wide column">
+          <div id="search-msg" class="ui message huge hidden"></div>
         </div>
+      </div>
+      <div class="row">
+        <div
+          id="mainForm"
+          class="twelve wide center computer sixteen wide tablet mobile column"
+        >
+          <div id="pay-msg" class="ui success message huge not-visible"></div>
+          <form class="ui form attached fluid segment">
+            <div class="ui error message huge"><i class="close icon"></i></div>
+
+            <h4 class="ui dividing header">Información General</h4>
+            <div class="field">
+              <div class="fields">
+                <div class="sixteen wide field">
+                  <label>Número de Cédula</label>
+                  <input
+                    class="numeric"
+                    name="cedula"
+                    placeholder="Numero de documento"
+                    type="text"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="two fields">
+                <div class="field">
+                  <label>Nombres</label>
+                  <input name="nombres" placeholder="Nombres" type="text" />
+                </div>
+                <div class="field">
+                  <label>Apellidos</label>
+                  <input name="apellidos" placeholder="Apellidos" type="text" />
+                </div>
+              </div>
+            </div>
+
+            <div class="fields regreso">
+              <div class="ten wide field">
+                <label>Programa Académico del cual egresó</label>
+                <select name="programa" class="ui dropdown search"> </select>
+              </div>
+              <div class="six wide field">
+                <label>Facultad</label>
+                <select name="facultad" class="ui dropdown search"> </select>
+              </div>
+            </div>
+            <br />
+            <br />
+            <div class="twelve wide fields">
+              <div class="inline fields">
+                <label for="invited">Acompañante: </label>
+                <div class="field">
+                  <div class="ui radio checkbox">
+                    <input
+                      type="radio"
+                      value="SI"
+                      id="sir"
+                      name="invited"
+                      tabindex="0"
+                    />
+                    <label>Si</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <div class="two fields">
+                <div class="field">
+                  <label>Cena Vegana 1:</label>
+                  <input name="cena_vegana" type="text" />
+                </div>
+                <div class="field">
+                  <label>Cena Vegana 2: </label>
+                  <input name="cena_vegana2" type="text" />
+                </div>
+              </div>
+            </div>
+            <div class="six wide field">
+              <div
+                id="submit-btn"
+                name="submit-btn "
+                class="ui submit red button"
+              >
+                continuar con cena
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
 
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-        crossorigin="anonymous"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.1.1.min.js"
+      integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+      crossorigin="anonymous"
+    ></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.9/semantic.min.js"></script>
     <?!= include('main'); ?>
-</body>
-
+  </body>
 </html>
