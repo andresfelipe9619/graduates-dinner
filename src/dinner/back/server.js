@@ -4,9 +4,16 @@ var PROGRAMAS =
   "https://docs.google.com/spreadsheets/d/1JBq9HT1yLVKGmpiB6fpOc6Lf0kqoZBziya0M5_dTjbo/edit?usp=sharing";
 
 function doGet(request) {
+  var guess_email = Session.getActiveUser().getEmail();
+  //      if (guess_email == 'suarez.andres@correounivalle.edu.co' || guess_email == 'samuel.ramirez@correounivalle.edu.co') {
   return HtmlService.createTemplateFromFile("index.html")
     .evaluate() // evaluate MUST come before setting the Sandbox mode
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  //      } else {
+  //        return HtmlService.createTemplateFromFile("close.html")
+  //        .evaluate() // evaluate MUST come before setting the Sandbox mode
+  //        .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  //      }
 }
 
 function include(filename) {
@@ -37,7 +44,7 @@ function getPrograms() {
 }
 
 function getPeopleRegistered() {
-  var peopleSheet = getRawDataFromSheet(GENERAL_DB, "ASISTENTES");
+  var peopleSheet = getRawDataFromSheet(GENERAL_DB, "INSCRITOS");
   var peopleObjects = sheetValuesToObject(peopleSheet);
   // logFunctionOutput(getPeopleRegistered.name, peopleObjects)
   return peopleObjects;
@@ -49,32 +56,46 @@ function searchPerson(cedula) {
   return person;
 }
 
-function validatePerson(cedula) {
-  var inscritos = getPeopleRegistered();
-  // var res = ""
-  var result = {
-    isRegistered: false,
-    index: -1,
-    data: null
-  };
+function registerPerson(person) {
+  var inscritosSheet = getSheetFromSpreadSheet(GENERAL_DB, "INSCRITOS");
+  var headers = inscritosSheet.getSheetValues(
+    1,
+    1,
+    1,
+    inscritosSheet.getLastColumn()
+  )[0];
+  person.push({ name: "hora_registro", value: new Date() });
+  person.push({ name: "pago_comprobado", value: "NO" });
 
-  for (var person in inscritos) {
-    if (String(inscritos[person].cedula) === String(cedula)) {
-      result.isRegistered = true;
-      result.index = person;
-      result.data = inscritos[person];
-    }
-  }
+  logFunctionOutput("perosn", person);
 
-  logFunctionOutput(validatePerson.name, result);
+  var personValues = objectToSheetValues(person, headers);
+  var finalValues = personValues.map(function(value) {
+    return String(value);
+  });
 
-  if (result.index > -1) {
-    return result;
-  } else {
-    result.isRegistered = false;
-    return result;
-  }
+  inscritosSheet.appendRow(finalValues);
+  var result = { data: finalValues, ok: true };
+  logFunctionOutput(registerPerson.name, result);
+  return result;
 }
+
+function getSRAPerson(cedula) {
+  var options = {
+    method: "post",
+    contentType: "application/x-www-form-urlencoded",
+    payload: "cedula=" + cedula,
+    validateHttpsCertificates: false
+  };
+  var result = UrlFetchApp.fetch(
+    "http://arzayus.co/egresados-script.php",
+    options
+  ).getContentText();
+  logFunctionOutput(getSRAPerson.name, result);
+
+  return result;
+}
+
 function getFacultiesAndPrograms() {
   var result = {
     faculties: null,
@@ -118,9 +139,36 @@ function getFacultiesFromPrograms(programs) {
   return faculties;
 }
 
+function validatePerson(cedula) {
+  var inscritos = getPeopleRegistered();
+  // var res = ""
+  var result = {
+    isRegistered: false,
+    index: -1,
+    data: null
+  };
+
+  for (var person in inscritos) {
+    if (String(inscritos[person].cedula) === String(cedula)) {
+      result.isRegistered = true;
+      result.index = person;
+      result.data = inscritos[person];
+    }
+  }
+
+  logFunctionOutput(validatePerson.name, result);
+
+  if (result.index > -1) {
+    return result;
+  } else {
+    result.isRegistered = false;
+    return result;
+  }
+}
+
 function objectToSheetValues(object, headers) {
   var arrayValues = new Array(headers.length);
-  var lowerHeaders = headers.map(function (item) {
+  var lowerHeaders = headers.map(function(item) {
     return item.toLowerCase();
   });
 
@@ -148,27 +196,79 @@ function objectToSheetValues(object, headers) {
   return arrayValues;
 }
 
-function generatePayment(index, invited) {
-  var inscritosSheet = getSheetFromSpreadSheet(GENERAL_DB, "ASISTENTES");
+function getCurrentFolder(name, mainFolder) {
+  //se crea la carpeta que va conener todos los docmuentos
+  var nameFolder = "documentos";
+  var FolderFiles,
+    folders = mainFolder.getFoldersByName(nameFolder);
+  if (folders.hasNext()) {
+    FolderFiles = folders.next();
+  } else {
+    FolderFiles = mainFolder.createFolder(nameFolder);
+  }
+
+  // se crea la carpeta que va contener los documentos de cada inscrito
+  var currentFolder,
+    folders = FolderFiles.getFoldersByName(name);
+  if (folders.hasNext()) {
+    currentFolder = folders.next();
+  } else {
+    currentFolder = FolderFiles.createFolder(name);
+  }
+
+  return currentFolder;
+}
+
+function getMainFolder() {
+  var dropbox = "Cena Gala";
+  var mainFolder,
+    folders = DriveApp.getFoldersByName(dropbox);
+
+  if (folders.hasNext()) {
+    mainFolder = folders.next();
+  } else {
+    mainFolder = DriveApp.createFolder(dropbox);
+  }
+  return mainFolder;
+}
+
+function createStudentFolder(numdoc, data) {
+  //se crea la carpeta que va contener los arhivos actuales
+  var result = {
+    url: "",
+    file: ""
+  };
+  var mainFolder = getMainFolder();
+  var currentFolder = getCurrentFolder(numdoc, mainFolder);
+  result.url = currentFolder.getUrl();
+
+  var contentType = data.substring(5, data.indexOf(";")),
+    bytes = Utilities.base64Decode(data.substr(data.indexOf("base64,") + 7)),
+    blob = Utilities.newBlob(bytes, contentType, file);
+
+  var file = currentFolder.createFile(blob);
+  file.setDescription("Subido Por " + numdoc);
+  file.setName(numdoc + "_documento");
+  result.file = file.getName();
+  return result;
+}
+
+function generatePayment(index) {
+  var inscritosSheet = getSheetFromSpreadSheet(GENERAL_DB, "INSCRITOS");
   var headers = inscritosSheet.getSheetValues(
     1,
     1,
     1,
     inscritosSheet.getLastColumn()
   )[0];
-
-  var pagoIndex = headers.indexOf("HORA_INGRESO");
+  var pagoIndex = headers.indexOf("PAGO_GENERADO");
   Logger.log(pagoIndex);
   Logger.log(index);
   logFunctionOutput(
     generatePayment.name,
-    inscritosSheet
-      .getRange(index, pagoIndex, 1, 2)
-      .getValues()
+    inscritosSheet.getRange(index, pagoIndex).getValues()
   );
-  inscritosSheet
-    .getRange(index + 1, pagoIndex + 1, 1, 2)
-    .setValues([[String(new Date()), invited]]);
+  inscritosSheet.getRange(index + 1, pagoIndex + 1).setValues([["SI"]]);
   return true;
 }
 
@@ -178,10 +278,10 @@ function sheetValuesToObject(sheetValues) {
   var peopleWithHeadings = addHeadings(people, headings);
 
   function addHeadings(people, headings) {
-    return people.map(function (personAsArray) {
+    return people.map(function(personAsArray) {
       var personAsObj = {};
 
-      headings.forEach(function (heading, i) {
+      headings.forEach(function(heading, i) {
         personAsObj[heading] = personAsArray[i];
       });
 

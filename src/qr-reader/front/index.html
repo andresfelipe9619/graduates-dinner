@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>QR Reader</title>
+    <base target="_top" />
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta http-equiv="Content-Security-Policy" content="connect-src http:" />
+    <link
+      rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.min.css"
+    />
+    <script
+      type="text/javascript"
+      src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"
+    ></script>
+    <style>
+      form {
+        display: none;
+      }
+      #navbar {
+        margin-bottom: 60px;
+      }
+      #pay-info {
+        display: none;
+      }
+      .not-visible {
+        display: none !important;
+      }
+      .pay-yes {
+        color: green !important;
+        font-size: 2em !important;
+      }
+      .pay-not {
+        color: red !important;
+        font-size: 2em !important;
+      }
+      #preview {
+        max-height: 70%;
+      }
+      #main-content {
+        margin-top: 60px;
+      }
+      .logo {
+        padding-bottom: 3px;
+      }
+      input:not([name="correo"]) {
+        text-transform: uppercase;
+      }
+      input[name="correo"] {
+        text-transform: lowercase;
+      }
+      input[name="pago_comprobado"] {
+        font-size: 20rem;
+      }
+      ::placeholder {
+        text-transform: none;
+      }
+      .dimmed.dimmable > .ui.animating.dimmer,
+      .dimmed.dimmable > .ui.visible.dimmer,
+      .ui.active.dimmer {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .ui.modal,
+      .ui.active.modal {
+        margin: 0 auto !important;
+        top: auto !important;
+        left: auto !important;
+        transform-origin: center !important;
+        transition: all ease 0.5s;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="navbar" class="ui fixed inverted menu blue">
+      <div class="ui container">
+        <img
+          class="logo"
+          src="http://www.cogestec.co/wp-content/uploads/2018/11/Logo-3.png"
+          width="180px"
+          height="90px"
+        />
+        <h3 class="header item">&nbsp;&nbsp;INGRESO EVENTO COGESTEC 2019</h3>
+      </div>
+    </div>
+
+    <div id="main-content" class="ui grid">
+      <div class="twelve wide column centered">
+        <video width="800" id="preview"></video>
+        <h2 id="output"></h2>
+      </div>
+      <div class="eight wide column centered">
+        <form class="ui form attached fluid segment" id="form-form">
+          <h4 class="ui dividing header">Información General</h4>
+          <div class="field">
+            <div class="two fields">
+              <div class="field">
+                <label>NÚMERO DE CÉDULA</label>
+                <input
+                  class="numeric"
+                  name="cedula"
+                  placeholder="Numero de documento"
+                  type="text"
+                />
+              </div>
+              <div class="field">
+                <label>PAIS</label>
+                <input
+                  name="pais"
+                  placeholder="Numero de documento"
+                  type="text"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="two fields">
+              <div class="field">
+                <label>NOMBRES</label>
+                <input name="nombres" placeholder="Nombres" type="text" />
+              </div>
+              <div class="field">
+                <label>APELLIDOS</label>
+                <input name="apellidos" placeholder="Apellidos" type="text" />
+              </div>
+            </div>
+          </div>
+
+          <div class="fields">
+            <div class="twelve wide field">
+              <label>CORREO ELECTRÓNICO</label>
+              <input
+                name="correo"
+                placeholder="Correo Electronico"
+                type="text"
+              />
+            </div>
+            <div class="four wide field">
+              <label>TÉLEFONO CELULAR</label>
+              <input
+                name="telefono"
+                class="numeric"
+                placeholder="Telefono"
+                type="text"
+              />
+            </div>
+          </div>
+          <div class="two fields">
+            <div class="field">
+              <label>CONCEPTO DE PAGO</label>
+              <input
+                name="concepto_pago"
+                placeholder="Concepto de pago"
+                type="text"
+              />
+            </div>
+            <div class="field">
+              <label>PAGO TOTAL</label>
+              <input
+                name="pago_total"
+                class="numeric"
+                placeholder="Pago Total "
+                type="text"
+              />
+            </div>
+          </div>
+          <div class="field">
+            <div class="two fields">
+              <div class="field">
+                <label>PAGO COMPROBADO</label>
+                <input
+                  name="pago_comprobado"
+                  placeholder="pago_comprobado"
+                  type="text"
+                />
+              </div>
+              <div class="field">
+                <label>DOCUMENTO VERIFICADO</label>
+                <input
+                  name="documento_verificado"
+                  placeholder="documento_verificado"
+                  type="text"
+                />
+              </div>
+            </div>
+          </div>
+        </form>
+        <button
+          style="margin: 5px 5px"
+          class="ui blue not-visible button"
+          id="register-assitance"
+          name="register-assitance"
+          onclick="submitAssistance()"
+        >
+          Ingresar al evento
+        </button>
+        <div class="ui tiny modal ">
+          <i class="close icon" onclick="location.reload('true')"></i>
+          <div class="ui large center aligned green inverted header ">
+            Bienvenido a COGESTEC 2019!
+          </div>
+          <div class="content">
+            <div id="result-msg" class="ui message"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.1.1.min.js"
+      integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.9/semantic.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(() => {
+        //setTimeout(() => {
+        //  searchForPerson("1234");
+        //}, 2000);
+        initScanner();
+      });
+      let personIndex = -1;
+      function initScanner() {
+        let scanner = new Instascan.Scanner({
+          video: document.getElementById("preview"),
+          mirror: false
+        });
+        scanner.addListener("scan", function(content) {
+          $("#output").html(content);
+          if (content) {
+            searchForPerson(content);
+          }
+        });
+        Instascan.Camera.getCameras()
+          .then(function(cameras) {
+            if (cameras.length > 0) {
+              var selectedCam = cameras[0];
+              $.each(cameras, (i, c) => {
+                if (c.name.indexOf("back") != -1) {
+                  selectedCam = c;
+                  return false;
+                }
+              });
+              scanner.start(selectedCam);
+            } else {
+              $("#output").html("No cameras found.");
+              console.error("No cameras found.");
+            }
+          })
+          .catch(function(e) {
+            $("#output").html("No cameras found.");
+            console.error(e);
+          });
+      }
+      function searchForPerson(content) {
+        hideForm();
+        let onSuccess = function(result) {
+          let person = JSON.parse(result);
+          if (person) {
+            $("#form-form").addClass("loading");
+            $("input[name='cedula']").addClass("not-allowed");
+            if (person.isRegistered) {
+              showForm();
+              showPersonInForm(person);
+              $("#preview").addClass("not-visible");
+            } else {
+              $("#output").html("Usuario no encontrado!");
+              $("#form-form").removeClass("loading");
+            }
+          } else {
+            console.log("Something went wrong searching user...");
+          }
+        };
+        let cedula = content;
+        if (cedula.length > 0) {
+          google.script.run.withSuccessHandler(onSuccess).searchPerson(cedula);
+        } else {
+          $("#search-msg").html("Por favor ingrese una cedula");
+          $("#search-msg").css("display", "block");
+          setTimeout(function() {
+            $("#search-msg").html("Por favor ingrese una cedula");
+            $("#search-msg").css("display", "none");
+          }, 3000);
+        }
+      }
+      function submitAssistance() {
+        $("#form-form").addClass("loading");
+        if (personIndex > -1) {
+          function onSuccess(result) {
+            if (result) {
+              if (currentPerson) {
+                $("#form-form").removeClass("loading");
+                showSuccesPayModal();
+              }
+            } else {
+              $("#form-form").removeClass("loading");
+              $("#output").html(
+                "No es posible registrarse el dia de hoy, por favor verifique la fecha"
+              );
+            }
+          }
+          google.script.run
+            .withSuccessHandler(onSuccess)
+            .registerAssistance(personIndex);
+        } else {
+          $("#form-form").removeClass("loading");
+        }
+      }
+      function showPersonInForm(person) {
+        loadPersonInForm(person);
+        disableFormFielfds(true);
+        $("#form-form").removeClass("loading");
+      }
+      function loadPersonInForm(person) {
+        console.log("Person in form", person);
+        personIndex = Number(person.index) + 1;
+        currentPerson = person.data;
+        $("input[name='nombres']").val(person.data.nombres);
+        $("input[name='apellidos']").val(person.data.apellidos);
+        $("input[name='cedula']").val(person.data.cedula);
+        $("input[name='correo']").val(person.data.correo);
+        $("input[name='pais']").val(person.data.pais);
+        $("input[name='institucion']").val(person.data.institucion);
+        $("input[name='telefono']").val(person.data.telefono);
+        $("input[name='dependencia']").val(person.data.dependencia);
+        $("input[name='concepto_pago']").val(person.data.concepto_pago);
+        $("input[name='pago_comprobado']").val(person.data.pago_comprobado);
+        if (person.data.pago_comprobado === "SI") {
+          $("input[name='pago_comprobado']").addClass("pay-yes");
+        } else {
+          $("input[name='pago_comprobado']").addClass("pay-not");
+          $("#register-assitance").addClass("not-visible");
+        }
+        if (person.data.hora_ingreso.length > 3) {
+          $("#register-assitance").addClass("not-visible");
+          $("#output").html("Usuario ya ingreso el dia de hoy (Jueves)");
+        }
+        $("input[name='documento_verificado']").val(
+          person.data.documento_verificado
+        );
+        $("input[name='pago_total']").val(person.data.pago_total);
+        // $(".ui.radio").checkbox();
+        if (person.data["acepta_ponencia"].includes("*")) {
+          $("input[name=acepta_ponencia]").attr("disabled", true);
+        }
+        if (person.data["acepta_ponencia"].includes("SI")) {
+          $("#ponencia_si").prop("checked", true);
+        } else if (person.data["acepta_ponencia"].includes("NO")) {
+          $("#ponencia_no").prop("checked", true);
+        } else {
+          $("#ponencia_fields").addClass("not-visible");
+        }
+        $(".file-ponencia-field").addClass("not-visible");
+      }
+      function disableFormFielfds(bool) {
+        if (bool) {
+          $("input:not([name='busca-cedula'], [type='radio'])").prop(
+            "readonly",
+            true
+          );
+          $("input:not([name='busca-cedula'], [type='radio'])").addClass(
+            "not-allowed"
+          );
+        } else {
+          $("input:not([name='busca-cedula'])").prop("readonly", false);
+          $("input:not([name='busca-cedula'])").removeClass("not-allowed");
+        }
+      }
+      function showSuccesPayModal() {
+        $("#form-form").removeClass("loading");
+        $("#result-msg").text("");
+        $(".ui.modal").modal("show");
+        $("#modal-form").addClass("not-visible");
+        $(".actions").css("display", "block");
+        $("#result-msg").text(
+          `Ha sido registrado satisfactoriamente el dia de hoy, puede acceder a su evento`
+        );
+        setTimeout(() => {
+          let link =
+            "https://script.google.com/a/correounivalle.edu.co/macros/s/AKfycbzbOPtudPTt92qUiMlrZYt3Bdw9d_Kfup0M44sMY7w/dev";
+          window.open(link, "_top");
+        }, 2000);
+      }
+      function showForm() {
+        $("#form-form").css("display", "block");
+        $("#register-assitance").removeClass("not-visible");
+        $("input[name='cedula']").val($("#busca-cedula").val());
+        disableFormFielfds(false);
+      }
+      function hideForm() {
+        $("#form-form").css("display", "none");
+        $("#pay-msg").addClass("not-visible");
+        $("#pay-msg").text("");
+        $("#register-assitance").addClass("not-visible");
+        disableFormFielfds(false);
+        $("#form-form").form("clear");
+      }
+    </script>
+  </body>
+</html>
