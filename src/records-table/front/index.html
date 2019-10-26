@@ -60,18 +60,11 @@
   </head>
 
   <body>
-    <!-- <div id="navbar" class="ui fixed inverted menu red">
-      <div class="ui container">
-        <h3 class="header item">
-          <img
-            class="logo"
-            src="http://www.univalle.edu.co/images/logo-footer.png"
-          />&nbsp;&nbsp;Noche de Gala Egresados 2018
-        </h3>
-      </div>
-    </div> -->
-
     <div id="main-content" class="ui main container middle center grid">
+      <div class="twelve wide column centered">
+        <video width="800" id="preview"></video>
+        <h2 id="output"></h2>
+      </div>
       <div class="one column row fluid" id="id-search">
         <div
           id="search-container"
@@ -199,6 +192,10 @@
       crossorigin="anonymous"
     ></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.9/semantic.min.js"></script>
+    <script
+      type="text/javascript"
+      src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"
+    ></script>
     <?!= include('main'); ?>
   </body>
 </html>
