@@ -231,35 +231,32 @@ function loadSRAPersonInForm(person) {
     console.log(restFemenineWord);
     function onSuccess(result) {
       var isGood = false;
-      if (result) {
-        $.each(result.programs, function(i, program) {
+      if (!result) return isGood;
+      $.each(result.programs, function(i, program) {
+        if (String(program["titulo_otorgado"]).includes(restFemenineWord) > 0) {
+          console.log("OMG", String(program["titulo_otorgado"]).split(" "));
+
           if (
-            String(program["titulo_otorgado"]).includes(restFemenineWord) > 0
+            String(program["titulo_otorgado"])
+              .split(" ")[0]
+              .includes(lessWord) > 0
           ) {
-            console.log("OMG", String(program["titulo_otorgado"]).split(" "));
+            console.log("first");
 
-            if (
-              String(program["titulo_otorgado"])
-                .split(" ")[0]
-                .includes(lessWord) > 0
-            ) {
-              console.log("first");
-
-              $("select[name='programa']").dropdown(
-                "set selected",
-                program.nombre
-              );
-              $(".dropdown").dropdown();
-              $(".ui.dropdown").addClass("disabled");
-              $(".fields.regreso").addClass("not-allowed");
-              isGood = true;
-            }
-          } else {
-            isGood = false;
+            $("select[name='programa']").dropdown(
+              "set selected",
+              program.nombre
+            );
+            $(".dropdown").dropdown();
+            $(".ui.dropdown").addClass("disabled");
+            $(".fields.regreso").addClass("not-allowed");
+            isGood = true;
           }
-        });
-        $(".ui.form").removeClass("loading");
-      } else return isGood;
+        } else {
+          isGood = false;
+        }
+      });
+      $(".ui.form").removeClass("loading");
     }
     return google.script.run
       .withSuccessHandler(onSuccess)
@@ -270,37 +267,14 @@ function loadSRAPersonInForm(person) {
 
 function loadPersonInForm(person) {
   console.log("Person in form", person);
+  const isPaymentApproved = person.data["pago_comprobado"] === "SI";
+  const isPaymentGenerated = person.data["pago_generado"] === "SI";
   personIndex = Number(person.index) + 1;
-  $("input[name='nombres']").val(person.data.nombres);
-  $("input[name='apellidos']").val(person.data.apellidos);
-  $("input[name='cedula']").val(person.data.cedula);
-  $("input[name='correo']").val(person.data.correo);
-  $("input[name='celular']").val(person.data.celular);
-  $("select[name='programa']").dropdown("set selected", person.data.programa);
-  $("select[name='facultad']").dropdown("set selected", person.data.facultad);
-  if (person.data["cena_vegana"] == "SI") {
-    $("input[name='cena_vegana']").prop("checked", true);
+  fillInFormData(person.data);
+  if (isPaymentApproved) {
+    showApprovedPayMessage();
   } else {
-    $("input[name='cena_vegana']").prop("checked", false);
-  }
-  if (person.data["pago_comprobado"] == "SI") {
-    $("#pay-msg").removeClass("not-visible");
-    $("#pay-msg").removeClass("warning");
-    $("#pay-msg").addClass("success");
-    $("#pay-msg").append(`<i class="icon check circle"></i>
-          El pago de su inscripción a la Noche de Gala de Egresados fue registrado satisfactoriamente. Le esperamos el
-          próximo 23 de Noviembre de 2018.
-          Si presenta alguna dificultad en el proceso de inscripción, por favor escribanos al correo electrónico soyegresado@correounivalle.edu.co
-        </div>`);
-  } else {
-    $("#pay-msg").removeClass("not-visible");
-    $("#pay-msg").removeClass("success");
-    $("#pay-msg").addClass("warning");
-
-    $("#pay-msg").append(`<i class="icon warning "></i>
-          El pago de su inscripción aun no ha sido registrado. Recuerde que después de 48 horas sin registrar el pago, el sistema anulará su inscripción.
-          Si presenta alguna dificultad en el proceso de inscripción, por favor escribanos al correo electrónico soyegresado@correounivalle.edu.co
-        </div>`);
+    showNotRegisteredPayMessage();
   }
 
   $(".ui.dropdown").addClass("disabled");
@@ -308,7 +282,7 @@ function loadPersonInForm(person) {
   $(".file-field").addClass("not-visible");
   $("#submit-btn").addClass("not-visible");
   $("#submit-pay-btn").addClass("not-visible");
-  if (person.data["pago_generado"] == "NO") {
+  if (!isPaymentGenerated) {
     $("#register-pay-btn").removeClass("not-visible");
     $("#register-pay-btn").addClass("visible");
   }
@@ -316,6 +290,43 @@ function loadPersonInForm(person) {
   disableFormFielfds(true);
   $(".ui.form").removeClass("loading");
 }
+
+function fillInFormData(data) {
+  $("input[name='nombres']").val(data.nombres);
+  $("input[name='apellidos']").val(data.apellidos);
+  $("input[name='cedula']").val(data.cedula);
+  $("input[name='correo']").val(data.correo);
+  $("input[name='celular']").val(data.celular);
+  $("select[name='programa']").dropdown("set selected", data.programa);
+  $("select[name='facultad']").dropdown("set selected", data.facultad);
+  if (data["cena_vegana"] == "SI") {
+    $("input[name='cena_vegana']").prop("checked", true);
+  } else {
+    $("input[name='cena_vegana']").prop("checked", false);
+  }
+}
+
+function showNotRegisteredPayMessage() {
+  $("#pay-msg").removeClass("not-visible");
+  $("#pay-msg").removeClass("success");
+  $("#pay-msg").addClass("warning");
+  $("#pay-msg").append(`<i class="icon warning "></i>
+        El pago de su inscripción aun no ha sido registrado. Recuerde que después de 48 horas sin registrar el pago, el sistema anulará su inscripción.
+        Si presenta alguna dificultad en el proceso de inscripción, por favor escribanos al correo electrónico soyegresado@correounivalle.edu.co
+      </div>`);
+}
+
+function showApprovedPayMessage() {
+  $("#pay-msg").removeClass("not-visible");
+  $("#pay-msg").removeClass("warning");
+  $("#pay-msg").addClass("success");
+  $("#pay-msg").append(`<i class="icon check circle"></i>
+        El pago de su inscripción a la Noche de Gala de Egresados fue registrado satisfactoriamente. Le esperamos el
+        próximo 23 de Noviembre de 2018.
+        Si presenta alguna dificultad en el proceso de inscripción, por favor escribanos al correo electrónico soyegresado@correounivalle.edu.co
+      </div>`);
+}
+
 function modalPayment() {
   var onSuccess = function(person) {
     if (!person) return console.log("Something went wrong searching user...");
@@ -384,6 +395,8 @@ function errorHandler(error) {
 function showForm() {
   $("#mainForm").css("display", "block");
   $("ui.submit.button").css("display", "block");
+  $("#register-pay-btn").removeClass("visible");
+  $("#register-pay-btn").addClass("not-visible");
   $("input[name='cedula']").val($("#busca-cedula").val());
   disableFormFielfds(false);
 }
@@ -448,15 +461,13 @@ function loadAcademicProgramsAndFaculties() {
 function searchPersonInSRA(cedula) {
   function onSuccess(result) {
     console.log("good job", result);
-    if (result) {
-      var resultObject = JSON.parse(result);
-      if (resultObject.titulo.length > 0 && resultObject.nombre.length > 0) {
-        return loadSRAPersonInForm(resultObject);
-      } else {
-        $(".ui.form").removeClass("loading");
-        return null;
-      }
+    if (!result) return;
+    var resultObject = JSON.parse(result);
+    if (resultObject.titulo.length && resultObject.nombre.length) {
+      return loadSRAPersonInForm(resultObject);
     }
+    $(".ui.form").removeClass("loading");
+    return null;
   }
 
   return google.script.run
