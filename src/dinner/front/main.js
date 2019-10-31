@@ -1,6 +1,5 @@
-{
-  /* <script type="text/babel"> */
-}
+// <script type="text/babel">
+
 $(document).ready(init_js);
 var buttonpressed;
 var personIndex;
@@ -15,12 +14,7 @@ function init_js() {
   $("select.dropdown").dropdown();
   $(".ui.modal").modal();
   $(".ui.modal").modal("setting", "closable", false);
-  // $(".ui.modal").modal({
-  //   blurring: true,
-  //   centered: true
 
-  // });
-  // $('#submit-btn').on('click',)
   $(".numeric").on("keypress", function(e) {
     return (
       e.metaKey || // cmd/ctrl
@@ -60,6 +54,7 @@ function validationpassed(e) {
         }
         google.script.run
           .withSuccessHandler(onSuccess)
+          .withFailureHandler(errorHandler)
           .createStudentFolder(
             $("input[name='cedula']").val(),
             e.target.result
@@ -116,14 +111,16 @@ function registerPersonInSheet(formData) {
     }
   }
   console.log(formData);
-  google.script.run.withSuccessHandler(onSuccess).registerPerson(formData);
+  google.script.run
+    .withSuccessHandler(onSuccess)
+    .withFailureHandler(errorHandler)
+    .registerPerson(formData);
 }
 
 function searchForPerson() {
   hideForm();
   $("#btn-search").addClass("loading");
-
-  var onSuccess = function(person) {
+  function onSuccessSearch(person) {
     if (person) {
       showForm();
       $(".ui.form").addClass("loading");
@@ -132,18 +129,18 @@ function searchForPerson() {
       $("input[name='cedula']").prop("readonly", true);
       $("input[name='cedula']").addClass("not-allowed");
       if (person.isRegistered) {
-        loadPersonInForm(person);
-      } else {
-        searchPersonInSRA(cedula);
+        return loadPersonInForm(person);
       }
-    } else {
-      console.log("Something went wrong searching user...");
+      return searchPersonInSRA(cedula);
     }
-  };
-
+    console.log("Something went wrong searching user...");
+  }
   var cedula = $("#busca-cedula").val();
   if (cedula.length > 0) {
-    google.script.run.withSuccessHandler(onSuccess).searchPerson(cedula);
+    google.script.run
+      .withSuccessHandler(onSuccessSearch)
+      .withFailureHandler(errorHandler)
+      .searchPerson(cedula);
   } else {
     $("#btn-search").removeClass("loading");
     $("#search-msg").html("Por favor ingrese una cedula");
@@ -236,10 +233,6 @@ function loadSRAPersonInForm(person) {
       var isGood = false;
       if (result) {
         $.each(result.programs, function(i, program) {
-          // console.log('rest')
-          //console.log(restFemenineWord)
-          // console.log(String(program["titulo_otorgado"]))
-
           if (
             String(program["titulo_otorgado"]).includes(restFemenineWord) > 0
           ) {
@@ -270,6 +263,7 @@ function loadSRAPersonInForm(person) {
     }
     return google.script.run
       .withSuccessHandler(onSuccess)
+      .withFailureHandler(errorHandler)
       .getFacultiesAndPrograms();
   }
 }
@@ -337,13 +331,17 @@ function modalPayment() {
     }
     return google.script.run
       .withSuccessHandler(fullSuccess)
+      .withFailureHandler(errorHandler)
       .generatePayment(personIndex);
   };
 
   var cedula = $("#busca-cedula").val();
   $("#modal-payment").addClass("loading");
   if (cedula.length > 0) {
-    return google.script.run.withSuccessHandler(onSuccess).searchPerson(cedula);
+    return google.script.run
+      .withSuccessHandler(onSuccess)
+      .withFailureHandler(errorHandler)
+      .searchPerson(cedula);
   }
 }
 
@@ -367,8 +365,20 @@ function submitPayment() {
     }
     return google.script.run
       .withSuccessHandler(onSuccess)
+      .withFailureHandler(errorHandler)
       .generatePayment(personIndex);
   }
+}
+
+function errorHandler(error) {
+  console.log("ERROR HANDLER ==>", error);
+  $(".loading").removeClass("loading");
+  $("#error-msg").removeClass("not-visible");
+  $("#error-msg").text(String(error));
+  setTimeout(() => {
+    $("#error-msg").addClass("not-visible");
+    $("#error-msg").text("");
+  }, 5000);
 }
 
 function showForm() {
@@ -429,7 +439,10 @@ function loadAcademicProgramsAndFaculties() {
       });
     }
   }
-  google.script.run.withSuccessHandler(onSuccess).getFacultiesAndPrograms();
+  google.script.run
+    .withSuccessHandler(onSuccess)
+    .withFailureHandler(errorHandler)
+    .getFacultiesAndPrograms();
 }
 
 function searchPersonInSRA(cedula) {
@@ -446,7 +459,10 @@ function searchPersonInSRA(cedula) {
     }
   }
 
-  return google.script.run.withSuccessHandler(onSuccess).getSRAPerson(cedula);
+  return google.script.run
+    .withSuccessHandler(onSuccess)
+    .withFailureHandler(errorHandler)
+    .getSRAPerson(cedula);
 }
 
 function testing() {
@@ -560,6 +576,5 @@ function formValidation() {
     }
   });
 }
-{
-  /* </script> */
-}
+
+// </script>

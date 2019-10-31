@@ -61,7 +61,7 @@ function registerPerson(person) {
   var headers = getHeadersFromSheet(inscritosSheet);
   person.push({ name: "hora_registro", value: new Date() });
   person.push({ name: "pago_comprobado", value: "NO" });
-  person.push({ name: "cena2_vegana", value: "NO" });
+  person.push({ name: "cena2_vegana", value: "-" });
 
   logFunctionOutput("person", person);
 
@@ -105,7 +105,7 @@ function getFacultiesAndPrograms() {
     for (var last in lastPrograms) {
       var isRepeated =
         String(programs[program].nombre) === String(lastPrograms[last].nombre);
-      if (!isRepeated) {
+      if (isRepeated) {
         esta = true;
         break;
       }
@@ -255,18 +255,20 @@ function generatePayment(index) {
 }
 
 function setColumnValue(options) {
-  var headers = getHeadersFromSheet(options.sheet);
-  var columnIndex = headers.indexOf(options.column);
+  var sheet = options.sheet;
+  var column = options.column;
+  var value = options.value;
+  var index = options.index;
+  var headers = getHeadersFromSheet(sheet);
+  var columnIndex = headers.indexOf(column);
   if (!columnIndex) throw "Column doesn't exist";
   Logger.log(columnIndex);
-  Logger.log(options.index);
+  Logger.log(index);
   logFunctionOutput(
     generatePayment.name,
-    inscritosSheet.getRange(options.index, columnIndex).getValues()
+    sheet.getRange(index, columnIndex).getValues()
   );
-  inscritosSheet
-    .getRange(++options.index, ++columnIndex)
-    .setValues([[options.value]]);
+  sheet.getRange(++index, ++columnIndex).setValues([[value]]);
 }
 
 function sheetValuesToObject(sheetValues) {

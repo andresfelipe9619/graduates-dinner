@@ -12,6 +12,10 @@ function onSpreadSheetEdit(e) {
   checkEditedCell(range);
 }
 
+function valueToString(value) {
+  return value.toString();
+}
+
 function checkEditedCell(range) {
   if (!(range.getColumn() == 11)) return;
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
@@ -31,12 +35,8 @@ function checkEditedCell(range) {
   var nextRow = valuesNextRow[0];
   Logger.log("range");
   Logger.log(rawPerson);
-  rawPerson = rawPerson.map(function(value) {
-    return value.toString();
-  });
-  nextRow = nextRow.map(function(value) {
-    return value.toString();
-  });
+  rawPerson = rawPerson.map(valueToString);
+  nextRow = nextRow.map(valueToString);
   if (!rawPerson) return;
 
   SELECTED_PERSON.row = range.getRow();
@@ -51,7 +51,7 @@ function checkEditedCell(range) {
   };
   Logger.log("person");
   Logger.log(SELECTED_PERSON);
-  var nextRowHasItems = !!(nextRow[0].length > 1 && nextRow[1].length > 1);
+  var nextRowHasItems = !!(nextRow[0].length && nextRow[1].length);
   Logger.log("has items below?");
   Logger.log(nextRowHasItems);
   handleOnPaymentChange(range);
@@ -64,10 +64,6 @@ function handleOnPaymentChange(range) {
     return sendAttendantPayApprovedMail();
   }
   Logger.log("Payment NOT accepted");
-
-  // else if (range.getValue() == "NO") {
-  //   sendPayDisapprovedMail();
-  // }
 }
 
 function getSheetFromSpreadSheet(url, sheet) {
@@ -90,7 +86,6 @@ function sendEmail(subject, body) {
       subject: subject,
       name: "Cena Egresados 2019",
       htmlBody: body
-      // attachments: [],
     });
   }
 }
@@ -112,86 +107,31 @@ function getPersonQR() {
 function buildAttendantPayApprovedBody() {
   var body = "";
   var successMsg = getSuccessMessage();
-  // successMsg = successMsg.concat(getLogo());
   body = successMsg;
   var qr = getPersonQR();
   body = body.concat(qr);
-  // body = body.concat(getBanner());
   return body;
-}
-
-function buildModal(successMsg) {
-  var modal =
-    '<div class="content">' +
-    '<div id="result-msg" class="ui message">' +
-    successMsg +
-    "</div>" +
-    '<form class="ui form not-visible" id="modal-form">' +
-    '<div id="pay_info_modal" ' +
-    'class="ui medium center aligned inverted header">' +
-    '<i class="icon lock"></i>' +
-    "<strong>INFORMACIÓN DE PAGO</strong><br/>" +
-    "</div>" +
-    '<div class="inline field">' +
-    "<strong>*NIT o Cédula:  </strong>" +
-    "<label>" +
-    SELECTED_PERSON.data.cedula +
-    "</label>" +
-    "</div>" +
-    '<div class="inline field">' +
-    "<strong>Programa:  </strong>" +
-    "<label>" +
-    SELECTED_PERSON.data.programa +
-    "</label>" +
-    "</div>" +
-    '<div class="inline field">' +
-    "<strong>*Pago Total:  </strong>" +
-    "<label>" +
-    "$ " +
-    SELECTED_PERSON.data.pago_total +
-    "(pesos colombianos)" +
-    " </label>" +
-    "</div>" +
-    '<div class="inline field">' +
-    "<strong>*Nombre Completo:  </strong>" +
-    "<label>" +
-    SELECTED_PERSON.data.nombre +
-    " </label>" +
-    "</div>" +
-    '<div class="inline field">' +
-    "<strong>*Dependencia:  </strong>" +
-    "<label>" +
-    SELECTED_PERSON.data.dependecia +
-    "</label>" +
-    "</div>" +
-    '<div class="inline field">' +
-    "<strong>Télefono de Contacto:  </strong>" +
-    "<label>" +
-    SELECTED_PERSON.data.celular +
-    " </label>" +
-    "</div>" +
-    "<br />" +
-    '<div class="actions">' +
-    '<button style="color:red">' +
-    '<a href="https://www.psepagos.co/PSEHostingUI/ShowTicketOffice.aspx?ID=4111">' +
-    "<h2>Generar pago</h2>" +
-    "</a></button>" +
-    "</div>" +
-    "</form>" +
-    "</div>";
-
-  return modal;
 }
 
 function getSuccessMessage() {
   return (
-    "<p>Cordial saludo " +
-    SELECTED_PERSON.data.nombre +
-    ", bienvenido a Cena Egresados 2019 el mejor evento de Cali." +
-    '<br/> En este email adjuntaremos un código QR, por favor, preséntarlo en las <span style="text-decoration: underline"> mesas de registro</span> al ingreso del evento, allí le entregarán su escarapela de ingreso,' +
-    'requerida para ingresar a las conferencias y otros servicios del evento, de igual manera es <span style="text-decoration: underline">la única forma </span> de obtener su certificado como ponente/asistente.</p>'
+    "<p>Reciba de parte de la Universidad del Valle un cálido saludo. " +
+    "Su transacción ha sido registrada exitosamente. Es un gusto contar con su asistencia a la Noche de Gala para Egresados 2019. Una oportunidad  para compartir e iniciar las festividades navideñas con la familia univalluna." +
+    "<br/>" +
+    '<br/> En este email adjuntaremos un código QR, por favor, preséntarlo en las <span style="text-decoration: underline"> mesas de registro</span> al ingreso del evento.' +
+    "<br/>" +
+    "<br/> Fecha: Viernes 06 de diciembre de 2019." +
+    "<br/> Hora: De 7:00 PM a 2:00 AM " +
+    "<br/> Lugar: Hotel Dann Carlton Cali, Salón Ritz. " +
+    "<br/>" +
+    "<br/> Nos vemos pronto." +
+    "<br/>" +
+    "<br/> <strong>Equipo Organizador</strong>" +
+    "<br/> <strong>Noche de Gala Egresados 2019</strong>" +
+    "<br/> <strong>Universidad del Valle  </strong></p>"
   );
 }
+
 function getLogo() {
   return (
     "<strong>Haga clic en el logo para conocer la agenda:</strong><br/>" +
@@ -199,6 +139,7 @@ function getLogo() {
     'width = "180px" height = "90px" /></a><br/>'
   );
 }
+
 function getBanner() {
   return (
     "<br/><strong>¡Sigue nuestras redes sociales y comunica tu vínculo directo con la innovación</strong><br/>" +
