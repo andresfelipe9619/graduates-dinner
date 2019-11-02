@@ -322,7 +322,7 @@ function showApprovedPayMessage() {
   $("#pay-msg").addClass("success");
   $("#pay-msg").append(`<i class="icon check circle"></i>
         El pago de su inscripción a la Noche de Gala de Egresados fue registrado satisfactoriamente. Le esperamos el
-        próximo 23 de Noviembre de 2018.
+        próximo 06 de diciembre de 2019.
         Si presenta alguna dificultad en el proceso de inscripción, por favor escribanos al correo electrónico soyegresado@correounivalle.edu.co
       </div>`);
 }
