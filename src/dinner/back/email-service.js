@@ -131,18 +131,3 @@ function getSuccessMessage() {
     "<br/> <strong>Universidad del Valle  </strong></p>"
   );
 }
-
-function getLogo() {
-  return (
-    "<strong>Haga clic en el logo para conocer la agenda:</strong><br/>" +
-    '<a href="http://www.cogestec.co/agenda/"><img src="http://www.cogestec.co/wp-content/uploads/2018/11/Logo-3.png" ' +
-    'width = "180px" height = "90px" /></a><br/>'
-  );
-}
-
-function getBanner() {
-  return (
-    "<br/><strong>¡Sigue nuestras redes sociales y comunica tu vínculo directo con la innovación</strong><br/>" +
-    '<a href="http://www.cogestec.co/agenda/"><img src="https://drive.google.com/uc?id=1W0p2HZt_NfV0bvkA12iMSwQh-K2aOizD"/></a>'
-  );
-}

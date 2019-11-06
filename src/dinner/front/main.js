@@ -102,7 +102,7 @@ function registerPersonInSheet(formData) {
 
       $("#result-msg").text("");
       $("#result-msg").text(
-        "Su inscripción a la Cena de Gala Egresados 2018 fue realizada de manera exitosa. Recuerde que usted cuenta con 48 horas para generar su pago. Pasadas estas 48 horas, el sistema deshabilitará la inscripción."
+        "Su inscripción a la Cena de Gala Egresados 2019 fue realizada de manera exitosa. Recuerde que usted cuenta con 48 horas para generar su pago. Pasadas estas 48 horas, el sistema deshabilitará la inscripción."
       );
       $(".ui.modal").modal("show");
       $(".actions").css("display", "block");

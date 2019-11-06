@@ -244,13 +244,13 @@ function createStudentFolder(numdoc, data) {
 }
 
 function generatePayment(index) {
-  var inscritosSheet = getSheetFromSpreadSheet(GENERAL_DB, "INSCRITOS");
-  setColumnValue({
-    index: index,
-    sheet: inscritosSheet,
-    column: "PAGO_GENERADO",
-    value: "SI"
-  });
+  // var inscritosSheet = getSheetFromSpreadSheet(GENERAL_DB, "INSCRITOS");
+  // setColumnValue({
+  //   index: index,
+  //   sheet: inscritosSheet,
+  //   column: "PAGO_GENERADO",
+  //   value: "SI"
+  // });
   return true;
 }
 
