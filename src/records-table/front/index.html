@@ -22,7 +22,7 @@
         margin: 30px 0px 0px 20px;
       }
       #main-content {
-        margin-top: 60px;
+        margin: 60px 0px;
       }
 
       ::placeholder {
@@ -57,7 +57,7 @@
       input[name="apellidos"],
       input[name="busca-cedula"],
       input[name="cena_vegana"],
-      input[name="cena_vegana2"] {
+      input[name="cena2_vegana"] {
         font-size: 24px !important;
         font-weight: bold !important;
       }
@@ -65,6 +65,16 @@
   </head>
 
   <body>
+    <div id="navbar" class="ui fixed inverted menu red">
+      <div class="ui container">
+        <h3 class="header item">
+          <img
+            class="logo"
+            src="http://www.univalle.edu.co/images/logo-footer.png"
+          />&nbsp;&nbsp;Noche de Gala Egresados 2019
+        </h3>
+      </div>
+    </div>
     <div id="main-content" class="ui main container middle center grid">
       <div class="twelve wide column centered">
         <video id="preview"></video>
@@ -103,6 +113,7 @@
           id="mainForm"
           class="twelve wide center computer sixteen wide tablet mobile column"
         >
+          <div id="error-msg" class="ui error message huge not-visible"></div>
           <div id="pay-msg" class="ui success message huge not-visible"></div>
           <form class="ui form attached fluid segment">
             <div class="ui error message huge"><i class="close icon"></i></div>
@@ -172,7 +183,7 @@
                 </div>
                 <div class="field">
                   <label>Cena Vegana 2: </label>
-                  <input name="cena_vegana2" type="text" />
+                  <input name="cena2_vegana" type="text" />
                 </div>
               </div>
             </div>

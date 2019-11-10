@@ -32,20 +32,20 @@ function getRawDataFromSheet(url, sheet) {
 function getPrograms() {
   var programsSheet = getRawDataFromSheet(PROGRAMAS, "PROGRAMAS");
   var programsObjects = sheetValuesToObject(programsSheet);
-  // logFunctionOutput(getPrograms.name, programsObjects)
+  // logFunctionOutput(getPrograms.name, programsObjects);
   return programsObjects;
 }
 
 function getPeopleRegistered() {
   var peopleSheet = getRawDataFromSheet(GENERAL_DB, "INSCRITOS");
   var peopleObjects = sheetValuesToObject(peopleSheet);
-  // logFunctionOutput(getPeopleRegistered.name, peopleObjects)
+  // logFunctionOutput(getPeopleRegistered.name, peopleObjects);
   return peopleObjects;
 }
 
 function searchPerson(cedula) {
   var person = validatePerson(cedula);
-  logFunctionOutput(searchPerson.name, person);
+  logFunctionOutput(searchPerson.name, { doc: cedula, result: person });
   return person;
 }
 
@@ -118,16 +118,37 @@ function getFacultiesFromPrograms(programs) {
   return faculties;
 }
 
-function objectToSheetValues(object, headers) {
+function jsonToSheetValues(object, headers) {
+  var arrayValues = new Array(headers.length);
+  var lowerHeaders = headers.map(function(item) {
+    return item.toLowerCase();
+  });
+  Logger.log("HEADERS");
+  Logger.log(lowerHeaders);
+  Logger.log("OBJECT");
+  Logger.log(object);
+  for (var item in object) {
+    for (var header in lowerHeaders) {
+      if (String(item) === String(lowerHeaders[header])) {
+        if (item === "nombres" || item === "apellidos") {
+          arrayValues[header] = object[item].toUpperCase();
+          Logger.log(arrayValues);
+        } else {
+          arrayValues[header] = object[item];
+          Logger.log(arrayValues);
+        }
+      }
+    }
+  }
+  return arrayValues;
+}
+
+function formObjectToSheetValues(object, headers) {
   var arrayValues = new Array(headers.length);
   var lowerHeaders = headers.map(function(item) {
     return item.toLowerCase();
   });
 
-  Logger.log("HEADERS");
-  Logger.log(lowerHeaders);
-  Logger.log("OBJECT");
-  Logger.log(object);
   for (var item in object) {
     for (var header in lowerHeaders) {
       if (String(object[item].name) == String(lowerHeaders[header])) {
@@ -144,11 +165,11 @@ function objectToSheetValues(object, headers) {
       }
     }
   }
-  //logFunctionOutput(objectToSheetValues.name, arrayValues)
+  //logFunctionOutput(formObjectToSheetValues.name, arrayValues)
   return arrayValues;
 }
 
-function generatePayment(index, invited) {
+function registerDinner(person, invited) {
   var inscritosSheet = getSheetFromSpreadSheet(GENERAL_DB, "INSCRITOS");
   var headers = inscritosSheet.getSheetValues(
     1,
@@ -157,17 +178,47 @@ function generatePayment(index, invited) {
     inscritosSheet.getLastColumn()
   )[0];
 
-  var pagoIndex = headers.indexOf("HORA_INGRESO");
-  Logger.log(pagoIndex);
+  var index = person.index;
+  var data = person.data;
+  var entryIndex = headers.indexOf("HORA_INGRESO");
+  var entryHour = String(new Date());
+  data["nota"] = "";
+  data["hora_ingreso"] = entryHour;
+  data["invitados_especiales"] = "";
+  data["acompañante"] = invited === "SI" ? "SI" : "NO";
+  Logger.log(entryIndex);
   Logger.log(index);
   logFunctionOutput(
-    generatePayment.name,
-    inscritosSheet.getRange(index, pagoIndex, 1, 2).getValues()
+    registerDinner.name,
+    inscritosSheet.getRange(index + 1, entryIndex + 1, 1, 1).getValues()
   );
   inscritosSheet
-    .getRange(index + 1, pagoIndex + 1, 1, 2)
-    .setValues([[String(new Date()), invited]]);
+    .getRange(index + 1, entryIndex + 1, 1, 1)
+    .setValues([[entryHour]]);
+
+  registerAttendee(data);
   return true;
+}
+
+function registerAttendee(person) {
+  var inscritosSheet = getSheetFromSpreadSheet(GENERAL_DB, "ASISTENTES");
+  var headers = getHeadersFromSheet(inscritosSheet);
+  var personValues = jsonToSheetValues(person, headers);
+  var finalValues = personValues.map(function(value) {
+    return String(value);
+  });
+
+  inscritosSheet.appendRow(finalValues);
+  var result = { data: finalValues, ok: true };
+  logFunctionOutput(registerAttendee.name, result);
+  return result;
+}
+
+function getHeadersFromSheet(sheet) {
+  var headers = [];
+  if (!sheet) return headers;
+  headers = sheet.getSheetValues(1, 1, 1, sheet.getLastColumn())[0];
+  return headers;
 }
 
 function sheetValuesToObject(sheetValues) {
@@ -186,13 +237,13 @@ function sheetValuesToObject(sheetValues) {
       return personAsObj;
     });
   }
-  // logFunctionOutput(sheetValuesToObject.name, peopleWithHeadings)
+  // logFunctionOutput(sheetValuesToObject.name, peopleWithHeadings);
   return peopleWithHeadings;
 }
 
-function logFunctionOutput(functionName, returnValue) {
-  Logger.log("Function-------->" + functionName);
-  Logger.log("Value------------>");
+function logFunctionOutput(name, returnValue) {
+  Logger.log("====================START" + name + "===============");
+  Logger.log("VALUE------------>");
   Logger.log(returnValue);
-  Logger.log("----------------------------------");
+  Logger.log("====================END" + name + "===============");
 }
