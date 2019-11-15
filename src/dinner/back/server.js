@@ -60,8 +60,9 @@ function registerPerson(person) {
   var inscritosSheet = getSheetFromSpreadSheet(GENERAL_DB, "INSCRITOS");
   var headers = getHeadersFromSheet(inscritosSheet);
   person.push({ name: "hora_registro", value: new Date() });
+  person.push({ name: "hora_ingreso", value: "" });
   person.push({ name: "pago_comprobado", value: "NO" });
-  person.push({ name: "cena2_vegana", value: "-" });
+  person.push({ name: "cena2_vegetariana", value: "-" });
 
   logFunctionOutput("person", person);
 

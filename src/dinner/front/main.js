@@ -75,20 +75,20 @@ function addPayment(formData) {
   formData.push({ name: "pago_generado", value: "NO" });
   // }
 
-  var index_vegana = -1;
-  var vegana = formData.find((field, index) => {
-    index_vegana = index;
-    return field.name == "cena_vegana";
+  var index_vegetariana = -1;
+  var vegetariana = formData.find((field, index) => {
+    index_vegetariana = index;
+    return field.name == "cena_vegetariana";
   });
-  console.log(vegana);
-  if (index_vegana > -1 && vegana) {
-    if (formData[index_vegana].value == "on") {
-      formData[index_vegana].value = "SI";
+  console.log(vegetariana);
+  if (index_vegetariana > -1 && vegetariana) {
+    if (formData[index_vegetariana].value == "on") {
+      formData[index_vegetariana].value = "SI";
     } else {
-      formData[index_vegana].value = "NO";
+      formData[index_vegetariana].value = "NO";
     }
   } else {
-    formData.push({ name: "cena_vegana", value: "NO" });
+    formData.push({ name: "cena_vegetariana", value: "NO" });
   }
 
   console.log("form", formData);
@@ -299,10 +299,10 @@ function fillInFormData(data) {
   $("input[name='celular']").val(data.celular);
   $("select[name='programa']").dropdown("set selected", data.programa);
   $("select[name='facultad']").dropdown("set selected", data.facultad);
-  if (data["cena_vegana"] == "SI") {
-    $("input[name='cena_vegana']").prop("checked", true);
+  if (data["cena_vegetariana"] == "SI") {
+    $("input[name='cena_vegetariana']").prop("checked", true);
   } else {
-    $("input[name='cena_vegana']").prop("checked", false);
+    $("input[name='cena_vegetariana']").prop("checked", false);
   }
 }
 
@@ -408,7 +408,7 @@ function hideForm() {
   $("#submit-btn").removeClass("not-visible");
   $("#submit-pay-btn").removeClass("not-visible");
   $("input[name='politicas']").prop("checked", false);
-  $("input[name='cena_vegana']").prop("checked", false);
+  $("input[name='cena_vegetariana']").prop("checked", false);
   $(".dropdown").dropdown();
   $(".ui.dropdown").removeClass("disabled");
   $(".fields.regreso").removeClass("not-allowed");
