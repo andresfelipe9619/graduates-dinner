@@ -147,8 +147,12 @@
     $("input[name='cedula']").val(person.data.cedula);
     $("input[name='correo']").val(person.data.correo);
     console.log(person.data["cena_vegetariana"]);
-    $("input[name='cena_vegetariana']").val(String(person.data["cena_vegetariana"]));
-    $("input[name='cena2_vegetariana']").val(String(person.data["cena2_vegetariana"]));
+    $("input[name='cena_vegetariana']").val(
+      String(person.data["cena_vegetariana"])
+    );
+    $("input[name='cena2_vegetariana']").val(
+      String(person.data["cena2_vegetariana"])
+    );
     $("input[name='celular']").val(person.data.celular);
     $("select[name='programa']").dropdown("set selected", person.data.programa);
     $("select[name='facultad']").dropdown("set selected", person.data.facultad);
@@ -203,6 +207,7 @@
         $("#submit-btn").removeClass("loading");
         if (result) {
           console.log("result", result);
+          showSuccesfullRegistrationMessage();
           hideForm();
           return true;
         }
@@ -214,6 +219,13 @@
     }
   }
 
+  function showSuccesfullRegistrationMessage() {
+    Swal.fire(
+      "Exito!",
+      "Egresado registrado satisfacoriamente. Buen provecho!",
+      "success"
+    );
+  }
   function errorHandler(error) {
     console.log("ERROR HANDLER ==>", error);
     $(".loading").removeClass("loading");

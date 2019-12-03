@@ -33,6 +33,9 @@ function getHeadersFromSheet(sheet) {
   var headers = [];
   if (!sheet) return headers;
   headers = sheet.getSheetValues(1, 1, 1, sheet.getLastColumn())[0];
+  headers = headers.filter(function(h) {
+    return !!normalizeString(h);
+  });
   return headers;
 }
 
@@ -159,17 +162,12 @@ function validatePerson(cedula) {
 
 function objectToSheetValues(object, headers) {
   var arrayValues = new Array(headers.length);
-  var lowerHeaders = headers.map(function(item) {
-    return item.toLowerCase();
-  });
+  var lowerHeaders = headers.map(normalizeString);
 
-  Logger.log("HEADERS");
-  Logger.log(lowerHeaders);
-  Logger.log("OBJECT");
-  Logger.log(object);
   for (var item in object) {
     for (var header in lowerHeaders) {
-      if (String(object[item].name) == String(lowerHeaders[header])) {
+      var propName = normalizeString(object[item].name);
+      if (propName === lowerHeaders[header]) {
         if (
           object[item].name == "nombres" ||
           object[item].name == "apellidos"
@@ -272,9 +270,16 @@ function setColumnValue(options) {
   sheet.getRange(++index, ++columnIndex).setValues([[value]]);
 }
 
-function sheetValuesToObject(sheetValues) {
-  var headings = sheetValues[0].map(String.toLowerCase);
-  var people = sheetValues.slice(1);
+function normalizeString(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase();
+}
+
+function sheetValuesToObject(sheetValues, headers) {
+  var headings = headers || sheetValues[0].map(normalizeString);
+  var people = null;
+  if (sheetValues) people = headers ? sheetValues : sheetValues.slice(1);
   var peopleWithHeadings = addHeadings(people, headings);
 
   function addHeadings(people, headings) {
@@ -288,7 +293,6 @@ function sheetValuesToObject(sheetValues) {
       return personAsObj;
     });
   }
-  // logFunctionOutput(sheetValuesToObject.name, peopleWithHeadings)
   return peopleWithHeadings;
 }
 

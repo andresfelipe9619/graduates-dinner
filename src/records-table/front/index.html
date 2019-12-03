@@ -53,13 +53,27 @@
         opacity: 0.8 !important;
       }
 
-      input[name="nombres"],
-      input[name="apellidos"],
-      input[name="busca-cedula"],
-      input[name="cena_vegetariana"],
-      input[name="cena2_vegetariana"] {
+      input,
+      label,
+      #submit-btn {
         font-size: 24px !important;
         font-weight: bold !important;
+      }
+
+      .ui.radio.checkbox input:checked ~ .box:before,
+      .ui.radio.checkbox input:checked ~ label:before {
+        border: 4px solid red;
+        height: 60px;
+        width: 60px;
+      }
+      .ui.radio.checkbox input:checked ~ .box:after,
+      .ui.radio.checkbox input:checked ~ label:after {
+        height: 18px;
+        left: 2px;
+        top: 1px;
+      }
+      #container-video {
+        min-width: 100%;
       }
     </style>
   </head>
@@ -75,11 +89,11 @@
         </h3>
       </div>
     </div>
+    <div id="container-video">
+      <video id="preview"></video>
+      <h2 id="output"></h2>
+    </div>
     <div id="main-content" class="ui main container middle center grid">
-      <div class="twelve wide column centered">
-        <video id="preview"></video>
-        <h2 id="output"></h2>
-      </div>
       <div class="one column row fluid" id="id-search">
         <div
           id="search-container"
@@ -160,17 +174,16 @@
             <br />
             <div class="twelve wide fields">
               <div class="inline fields">
-                <label for="invited">Acompañante: </label>
+                <label for="invited">Sin Acompañante: </label>
                 <div class="field">
                   <div class="ui radio checkbox">
                     <input
                       type="radio"
-                      value="SI"
+                      value="NO"
                       id="sir"
                       name="invited"
                       tabindex="0"
                     />
-                    <label>Si</label>
                   </div>
                 </div>
               </div>
@@ -193,7 +206,7 @@
                 name="submit-btn "
                 class="ui submit red button"
               >
-                continuar con cena
+                CONTINUAR CON CENA
               </div>
             </div>
           </form>
@@ -212,6 +225,7 @@
       type="text/javascript"
       src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"
     ></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <?!= include('main'); ?>
   </body>
 </html>

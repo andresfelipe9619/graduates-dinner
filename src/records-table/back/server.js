@@ -181,11 +181,13 @@ function registerDinner(person, invited) {
   var index = person.index;
   var data = person.data;
   var entryIndex = headers.indexOf("HORA_INGRESO");
-  var entryHour = String(new Date());
+  var today = new Date()
+  var entryHour = String(today);
   data["nota"] = "";
-  data["hora_ingreso"] = entryHour;
+  data["timestamp"] = entryHour;
+  data["hora_ingreso"] = today.getHours();
   data["invitados_especiales"] = "";
-  data["acompañante"] = invited === "SI" ? "SI" : "NO";
+  data["acompañante"] = invited === "NO" ? "NO" : "SI";
   Logger.log(entryIndex);
   Logger.log(index);
   logFunctionOutput(
