@@ -7,7 +7,7 @@
     $(".ui.checkbox").checkbox();
     initScanner();
     $("select.dropdown").dropdown();
-    $(".numeric").on("keypress", function(e) {
+    $(".numeric").on("keypress", function (e) {
       return (
         e.metaKey || // cmd/ctrl
         e.which <= 0 || // arrow keys
@@ -15,7 +15,7 @@
         /[0-9]/.test(String.fromCharCode(e.which))
       ); // numbers
     });
-    $("#busca-cedula").on("keyup", function(event) {
+    $("#busca-cedula").on("keyup", function (event) {
       event.preventDefault();
       // Number 13 is the "Enter" key on the keyboard
       if (event.keyCode === 13) {
@@ -29,14 +29,14 @@
       video: document.getElementById("preview"),
       mirror: false
     });
-    scanner.addListener("scan", function(content) {
+    scanner.addListener("scan", function (content) {
       $("#output").html(content);
       if (content) {
         searchForPerson(content);
       }
     });
     Instascan.Camera.getCameras()
-      .then(function(cameras) {
+      .then(function (cameras) {
         if (cameras.length > 0) {
           var selectedCam = cameras[0];
           $.each(cameras, (i, c) => {
@@ -51,7 +51,7 @@
           console.error("No cameras found.");
         }
       })
-      .catch(function(e) {
+      .catch(function (e) {
         $("#output").html("No cameras found.");
         console.error(e);
       });
@@ -75,7 +75,7 @@
     hideForm();
     $("#btn-search").addClass("loading");
     $("#btn-search").prop("disabled", true);
-    var onSuccess = function(person) {
+    var onSuccess = function (person) {
       if (!person) return console.log("Something went wrong searching user...");
       if (person.index > -1) {
         showForm();
@@ -162,7 +162,7 @@
     }
     disableFormFields(true);
 
-    if (person.data["hora_ingreso"] != "" && person.data["invitados"] != "") {
+    if (person.data["hora_ingreso"] && person.data["invitados"]) {
       $("#submit-btn").addClass("not-visible");
       $("#pay-msg").removeClass("not-visible");
       $("#pay-msg").removeClass("warning");
@@ -170,7 +170,7 @@
       $("#pay-msg").append(`<i class="icon check circle"></i>
            Disfrute de su cena, no puede repetir mas.
           </div>`);
-    } else if (person.data["pago_comprobado"] == "SI") {
+    } else if (person.data["pago_comprobado"] === "SI") {
       $("#pay-msg").removeClass("not-visible");
       $("#pay-msg").removeClass("warning");
       $("#pay-msg").addClass("success");
@@ -262,7 +262,7 @@
     function onSuccess(result) {
       console.log("good job", result);
       if (result) {
-        $.each(result.programs, function(i, program) {
+        $.each(result.programs, function (i, program) {
           $("select[name='programa']").append(
             $("<option>", {
               value: program.nombre,
@@ -271,7 +271,7 @@
           );
         });
 
-        $.each(result.faculties, function(i, faculty) {
+        $.each(result.faculties, function (i, faculty) {
           $("select[name='facultad']").append(
             $("<option>", {
               value: faculty,
@@ -280,8 +280,8 @@
           );
         });
 
-        $("select[name='programa']").on("change", function(e) {
-          $.each(result.programs, function(i, program) {
+        $("select[name='programa']").on("change", function (e) {
+          $.each(result.programs, function (i, program) {
             if (e.target.value == program.nombre) {
               $("select[name='facultad']").val(program.facultad);
               $("select[name='facultad']").trigger("change");
