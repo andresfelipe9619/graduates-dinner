@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html>
+
   <head>
     <base target="_top" />
     <meta http-equiv="Content-Security-Policy" content="connect-src http:" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link
-      rel="stylesheet"
-      href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.min.css"
-    />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.min.css" />
     <style>
       #navbar {
         margin-bottom: 60px;
@@ -21,6 +19,7 @@
       .submit.button {
         margin: 30px 0px 0px 20px;
       }
+
       #main-content {
         margin: 60px 0px;
       }
@@ -48,8 +47,9 @@
       .visible {
         display: block !important;
       }
+
       .ui.disabled.dropdown,
-      .ui.dropdown .menu > .disabled.item {
+      .ui.dropdown .menu>.disabled.item {
         opacity: 0.8 !important;
       }
 
@@ -75,10 +75,9 @@
     <div id="navbar" class="ui fixed inverted menu red">
       <div class="ui container">
         <h3 class="header item">
-          <img
-            class="logo"
-            src="http://www.univalle.edu.co/images/logo-footer.png"
-          />&nbsp;&nbsp;Noche de Gala Egresados 2021
+          <img class="logo" alt="Logo Univalle"
+            src="http://www.univalle.edu.co/images/logo-footer.png" />&nbsp;&nbsp;Noche de Gala
+          Egresados 2021
         </h3>
       </div>
     </div>
@@ -88,25 +87,11 @@
     </div>
     <div id="main-content" class="ui main container middle center grid">
       <div class="one column row fluid" id="id-search">
-        <div
-          id="search-container"
-          class="twelve wide computer sixteen wide tablet mobile column"
-        >
+        <div id="search-container" class="twelve wide computer sixteen wide tablet mobile column">
           <div class="ui fluid action input large">
-            <input
-              id="busca-cedula"
-              name="busca-cedula"
-              class="numeric"
-              placeholder="Ingrese su numero de cédula..."
-              type="number"
-              autofocus
-            />
-            <button
-              id="btn-search"
-              tabindex="0"
-              class="ui red button"
-              onclick="searchForPerson()"
-            >
+            <input id="busca-cedula" name="busca-cedula" class="numeric" placeholder="Ingrese su numero de cédula..."
+              type="number" autofocus />
+            <button id="btn-search" tabindex="0" class="ui red button" onclick="searchForPerson()">
               Continuar
             </button>
           </div>
@@ -116,10 +101,7 @@
         </div>
       </div>
       <div class="row">
-        <div
-          id="mainForm"
-          class="twelve wide center computer sixteen wide tablet mobile column"
-        >
+        <div id="mainForm" class="twelve wide center computer sixteen wide tablet mobile column">
           <div id="error-msg" class="ui error message huge not-visible"></div>
           <div id="pay-msg" class="ui success message huge not-visible"></div>
           <form class="ui form attached fluid segment">
@@ -130,12 +112,8 @@
               <div class="fields">
                 <div class="sixteen wide field">
                   <label>Número de Cédula</label>
-                  <input
-                    class="numeric"
-                    name="cedula"
-                    placeholder="Numero de documento"
-                    type="text"
-                  />
+                  <input class="numeric" name="cedula" aria-label="cedula" placeholder="Numero de documento"
+                    type="text" />
                 </div>
               </div>
             </div>
@@ -144,11 +122,11 @@
               <div class="two fields">
                 <div class="field">
                   <label>Nombres</label>
-                  <input name="nombres" placeholder="Nombres" type="text" />
+                  <input name="nombres" aria-label="nombres" placeholder="Nombres" type="text" />
                 </div>
                 <div class="field">
                   <label>Apellidos</label>
-                  <input name="apellidos" placeholder="Apellidos" type="text" />
+                  <input name="apellidos" aria-label="apellidos" placeholder="Apellidos" type="text" />
                 </div>
               </div>
             </div>
@@ -170,35 +148,31 @@
                 <label for="invited">Sin Acompañante: </label>
                 <div class="field compact segment">
                   <div class="ui fitted toggle checkbox">
-                    <input
-                      type="radio"
-                      value="NO"
-                      id="sir"
-                      name="invited"
-                      tabindex="0"
-                    />
+                    <input type="radio" value="NO" id="sir" aria-label="invited" name="invited" tabindex="0" />
                   </div>
                 </div>
               </div>
             </div>
-            <!-- <div class="field">
-              <div class="two fields">
-                <div class="field">
-                  <label>Cena Vegetariana 1:</label>
-                  <input name="cena_vegetariana" type="text" />
-                </div>
-                <div class="field">
-                  <label>Cena Vegetariana 2: </label>
-                  <input name="cena2_vegetariana" type="text" />
-                </div>
+            <div class="field">
+              <div class="ui checkbox">
+                <input name="cena_vegetariana1" type="checkbox" aria-label="cena vegetariana">
+                <label>
+                  Cena
+                  vegetariana
+                  para egresado
+                </label>
               </div>
-            </div> -->
+              <div class="ui checkbox">
+                <input name="cena_vegetariana2" type="checkbox" aria-label="cena vegetariana">
+                <label>
+                  Cena vegetariana
+                  para
+                  acompañante
+                </label>
+              </div>
+            </div>
             <div class="six wide field">
-              <div
-                id="submit-btn"
-                name="submit-btn "
-                class="ui submit red button"
-              >
+              <div id="submit-btn" name="submit-btn " class="ui submit red button">
                 CONTINUAR CON CENA
               </div>
             </div>
@@ -208,17 +182,12 @@
     </div>
 
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-    <script
-      src="https://code.jquery.com/jquery-3.1.1.min.js"
-      integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-      crossorigin="anonymous"
-    ></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"
+      integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.9/semantic.min.js"></script>
-    <script
-      type="text/javascript"
-      src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"
-    ></script>
+    <script type="text/javascript" src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <?!= include('front/main'); ?>
   </body>
+
 </html>

@@ -30,35 +30,6 @@ function getRawDataFromSheet(sheet, url) {
   return null;
 }
 
-const getSheetsData = () => {
-  const activeSheetName = getActiveSheetName();
-  return getSheets().map((sheet, index) => {
-    const name = sheet.getName();
-    return {
-      name,
-      index,
-      isActive: name === activeSheetName,
-    };
-  });
-};
-
-const addSheet = sheetTitle => {
-  SpreadsheetApp.getActive().insertSheet(sheetTitle);
-  return getSheetsData();
-};
-
-const deleteSheet = sheetIndex => {
-  const sheets = getSheets();
-  SpreadsheetApp.getActive().deleteSheet(sheets[sheetIndex]);
-  return getSheetsData();
-};
-
-const setActiveSheet = sheetName => {
-  SpreadsheetApp.getActive()
-    .getSheetByName(sheetName)
-    .activate();
-  return getSheetsData();
-};
 
 function findText({ sheet, text }) {
   let index = -1;
@@ -112,6 +83,19 @@ function getHeadersFromSheet(sheet) {
   return headers;
 }
 
+function jsonToSheetValues(json, headers) {
+  const arrayValues = new Array(headers.length);
+  const lowerHeaders = headers.map(normalizeString);
+  Object.keys(json).forEach(key => {
+    const keyValue = normalizeString(key);
+    lowerHeaders.forEach((header, index) => {
+      if (keyValue === header) {
+        arrayValues[index] = String(json[key]);
+      }
+    });
+  });
+  return arrayValues;
+}
 function objectToSheetValues(object, headers) {
   let arrayValues = new Array(headers.length)
   let lowerHeaders = headers.map(function (item) {

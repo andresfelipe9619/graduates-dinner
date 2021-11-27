@@ -146,13 +146,19 @@
     $("input[name='apellidos']").val(person.data.apellidos);
     $("input[name='cedula']").val(person.data.cedula);
     $("input[name='correo']").val(person.data.correo);
-    console.log(person.data["cena_vegetariana"]);
-    $("input[name='cena_vegetariana']").val(
-      String(person.data["cena_vegetariana"])
-    );
-    $("input[name='cena2_vegetariana']").val(
-      String(person.data["cena2_vegetariana"])
-    );
+    const vegetarian = person.data['cena_vegetariana']
+    console.log("cena_vegetariana", vegetarian);
+    if (vegetarian == 1) {
+      $("input[name='cena_vegetariana1']").prop('checked', true)
+    } else {
+      $("input[name='cena_vegetariana1']").prop('checked', false)
+    }
+
+    if (vegetarian == 2) {
+      $("input[name='cena_vegetariana2']").prop('checked', true)
+    } else {
+      $("input[name='cena_vegetariana2']").prop('checked', false)
+    }
     $("input[name='celular']").val(person.data.celular);
     $("select[name='programa']").dropdown("set selected", person.data.programa);
     $("select[name='facultad']").dropdown("set selected", person.data.facultad);
@@ -162,7 +168,7 @@
     }
     disableFormFields(true);
 
-    if (person.data["hora_ingreso"] && person.data["invitados"]) {
+    if (person.data["hora_ingreso"]) {
       $("#submit-btn").addClass("not-visible");
       $("#pay-msg").removeClass("not-visible");
       $("#pay-msg").removeClass("warning");

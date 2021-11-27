@@ -37,6 +37,12 @@ function getPeopleRegisteredSheet () {
   return { sheet, headers }
 }
 
+function getAssitententsSheet () {
+  const sheet = getSheetFromSpreadSheet('ASISTENTES')
+  const headers = getHeadersFromSheet(sheet)
+  return { sheet, headers }
+}
+
 function getFacultiesAndPrograms () {
   let result = {
     faculties: null,
@@ -99,13 +105,13 @@ function validatePerson (cedula) {
 
 function registerDinner(person, invited) {
   let { sheet, headers } = getPeopleRegisteredSheet()
-  var index = person.index;
-  var data = person.data;
+  let index = person.index;
+  let data = person.data;
   Logger.log(index);
   Logger.log(data);
-  var entryIndex = headers.indexOf("HORA_INGRESO");
-  var today = new Date()
-  var entryHour = String(today);
+  let entryIndex = headers.indexOf("HORA_INGRESO");
+  let today = new Date()
+  let entryHour = String(today);
   data["nota"] = "";
   data["timestamp"] = entryHour;
   data["hora_ingreso"] = today.getHours();
@@ -115,10 +121,10 @@ function registerDinner(person, invited) {
   Logger.log(index);
   logFunctionOutput(
     registerDinner.name,
-    sheet.getRange(index + 1, entryIndex + 1, 1, 1).getValues()
+    sheet.getRange(index - 1, entryIndex + 1, 1, 1).getValues()
   );
   sheet
-    .getRange(index + 1, entryIndex + 1, 1, 1)
+    .getRange(index - 1, entryIndex + 1, 1, 1)
     .setValues([[entryHour]]);
 
   registerAttendee(data);
@@ -126,15 +132,10 @@ function registerDinner(person, invited) {
 }
 
 function registerAttendee(person) {
-  var inscritosSheet = getSheetFromSpreadSheet(GENERAL_DB, "ASISTENTES");
-  var headers = getHeadersFromSheet(inscritosSheet);
-  var personValues = jsonToSheetValues(person, headers);
-  var finalValues = personValues.map(function(value) {
-    return String(value);
-  });
-
-  inscritosSheet.appendRow(finalValues);
-  var result = { data: finalValues, ok: true };
+  let { sheet, headers } = getAssitententsSheet()
+  let personValues = jsonToSheetValues(person, headers);
+  sheet.appendRow(personValues);
+  let result = { data: personValues, ok: true };
   logFunctionOutput(registerAttendee.name, result);
   return result;
 }
